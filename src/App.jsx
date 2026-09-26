@@ -104,7 +104,6 @@ const serviceCategories = [
 export default function App() {
   const [activeModal, setActiveModal] = useState(null);
   
-  // New Loader State
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   
@@ -113,33 +112,39 @@ export default function App() {
   const servicesRef = useRef(null);
   const lenisRef = useRef(null);
 
+  // 1. Lenis & GSAP Master Sync Setup
   useEffect(() => {
     const lenis = new Lenis();
     lenisRef.current = lenis;
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    
+    gsap.ticker.lagSmoothing(0, 0);
 
     return () => {
+      gsap.ticker.remove((time) => lenis.raf(time * 1000));
       lenis.destroy();
-      ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 
-  // Handle Scroll Locking (Modals and Loader)
+  // 2. Handle Scroll Locking
   useEffect(() => {
-    // If not fully loaded OR a modal is open, lock the scroll.
     if (!isLoaded || activeModal !== null) {
       document.body.style.overflow = 'hidden';
       if (lenisRef.current) lenisRef.current.stop();
     } else {
       document.body.style.overflow = 'unset';
       if (lenisRef.current) lenisRef.current.start();
-      
-      // Trigger entrance animations only after the loader disappears
+    }
+  }, [isLoaded, activeModal]);
+
+  // 3. Trigger Content Reveal (Only runs once when fully loaded)
+  useEffect(() => {
+    if (isLoaded) {
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current.children,
@@ -163,10 +168,9 @@ export default function App() {
             });
         }
       }
-      
       ScrollTrigger.refresh();
     }
-  }, [isLoaded, activeModal]);
+  }, [isLoaded]);
 
   return (
     <div className="relative min-h-screen bg-transparent text-white font-sans selection:bg-amber-500 selection:text-white overflow-hidden">
@@ -182,7 +186,7 @@ export default function App() {
         }
       `}</style>
 
-      {/* The Glassmorphism Loading Screen */}
+      {/* Loading Screen */}
       <div 
         className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-2xl transition-opacity duration-1000 ${isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
       >
@@ -191,15 +195,12 @@ export default function App() {
           alt="Zelaris Events Logo" 
           className="w-48 md:w-56 mb-10 animate-pulse drop-shadow-[0_0_25px_rgba(212,175,55,0.3)]"
         />
-        <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+        <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.2)]">
           <div 
             className="h-full bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#aa7c11] transition-all duration-300 ease-out"
             style={{ width: `${loadProgress}%` }}
           />
         </div>
-        <p className="text-[#d4af37] mt-4 font-semibold tracking-widest text-sm drop-shadow-md">
-          {loadProgress}%
-        </p>
       </div>
 
       <div className="fixed inset-0 z-0">
@@ -215,16 +216,16 @@ export default function App() {
           <img 
             src="/logo.png" 
             alt="Zelaris Events Logo" 
-            className="w-56 md:w-72 lg:w-80 mb-6 drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] filter brightness-110"
+            className="w-56 md:w-72 lg:w-80 mb-6 opacity-0 drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] filter brightness-110"
           />
-          <p className="text-neutral-100 text-sm md:text-lg mb-8 max-w-lg mx-auto leading-snug font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+          <p className="text-neutral-100 text-sm md:text-lg mb-8 max-w-lg mx-auto opacity-0 leading-snug font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
             Personalized wedding concepts, A–Z event planning, and luxury hospitality across India.
           </p>
           <a 
             href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20booking%20an%20event."
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-gradient-to-r from-[#d4af37] to-[#aa7c11] hover:from-[#e5c558] hover:to-[#c49215] text-black px-8 py-3.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.4)] inline-block text-sm tracking-wide"
+            className="bg-gradient-to-r from-[#d4af37] to-[#aa7c11] hover:from-[#e5c558] hover:to-[#c49215] opacity-0 text-black px-8 py-3.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.4)] inline-block text-sm tracking-wide"
           >
             Book Your Event
           </a>
@@ -243,7 +244,7 @@ export default function App() {
             <div 
               key={index} 
               onClick={() => setActiveModal(index)}
-              className="service-card cursor-pointer bg-black/30 backdrop-blur-md border border-white/15 p-6 rounded-2xl hover:bg-black/45 hover:border-[#d4af37]/60 transition-all duration-300 group hover:-translate-y-1 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+              className="service-card cursor-pointer bg-black/30 opacity-0 backdrop-blur-md border border-white/15 p-6 rounded-2xl hover:bg-black/45 hover:border-[#d4af37]/60 transition-all duration-300 group hover:-translate-y-1 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
             >
               <div className="text-[#d4af37] mb-4 group-hover:scale-110 transition-transform duration-300 origin-left drop-shadow-md">
                 {service.icon}

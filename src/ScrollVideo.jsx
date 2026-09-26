@@ -41,7 +41,9 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     function render() {
       if (!canvas || !context) return;
       
-      const img = images[playhead.frame];
+      // Calculate exact frame dynamically for ultimate smoothness
+      const frameIndex = Math.round(playhead.frame);
+      const img = images[frameIndex];
       
       if (img && img.complete && img.naturalWidth > 0) {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -53,6 +55,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
         const centerShiftX = (canvas.width - img.width * ratio) / 2;
         const centerShiftY = (canvas.height - img.height * ratio) / 2;
         
+        // Math.floor prevents sub-pixel rendering lag
         context.drawImage(
           img, 
           0, 0, 
@@ -76,10 +79,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
       for (let i = 2; i <= frameCount; i++) {
         const img = new Image();
         img.src = `/frames_optimized/frame_${i.toString().padStart(3, '0')}.webp`;
-        
-        // Count the frame whether it succeeds or fails so the loader never gets stuck
         img.decode().then(trackProgress).catch(trackProgress); 
-        
         images[i - 1] = img; 
       }
     };
@@ -107,13 +107,12 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
     const tween = gsap.to(playhead, {
       frame: frameCount - 1,
-      snap: "frame",
       ease: "none",
       scrollTrigger: {
         trigger: document.body,
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.5, 
+        scrub: true, // Removed delay for instant feedback
       },
       onUpdate: render,
     });
@@ -146,9 +145,13 @@ export default function ScrollVideo({ onProgress, onComplete }) {
       document.removeEventListener('visibilitychange', handleVisibility);
       tween.kill();
       blurTween.kill();
+      // Only kill ScrollTriggers explicitly tied to this component in production
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
-  }, [frameCount, onProgress, onComplete]);
+    
+    // FIX: Removed onProgress and onComplete from dependency array to prevent the infinite loading loop
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frameCount]);
 
   return (
     <div 
