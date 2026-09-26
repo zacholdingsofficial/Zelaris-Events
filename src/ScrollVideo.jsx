@@ -14,20 +14,14 @@ export default function ScrollVideo() {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d', { alpha: false });
     
-    let lastWidth = window.innerWidth;
-
     const updateCanvasSize = () => {
-      // Only re-render if the screen WIDTH changes (ignores mobile address bar height collapsing/expanding)
-      if (window.innerWidth === lastWidth && canvas.width > 0) return;
-      lastWidth = window.innerWidth;
-
       const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = 'high';
       
-      // Force a redraw immediately whenever the window width changes
+      // Force a redraw immediately whenever the window resizes
       render(); 
     };
 
@@ -89,9 +83,10 @@ export default function ScrollVideo() {
       }
     );
 
-    // Detect when the user switches tabs or focuses back on the window
+    // FIX: Detect when the user switches tabs or focuses back on the window
     const handleVisibility = () => {
       if (!document.hidden) {
+        // requestAnimationFrame ensures the browser has fully restored memory before drawing
         requestAnimationFrame(render);
       }
     };
