@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Utensils, Sparkles, Wand2, Crown, CalendarCheck, Camera, X, MapPin,
-  CheckCircle2, ArrowRight, ChevronDown, MessageCircle, PenTool, PartyPopper
+  CheckCircle2, MessageCircle, PenTool, PartyPopper
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -24,6 +24,15 @@ const InstagramIcon = ({ size = 24, className = "" }) => (
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
   </svg>
+);
+
+// A single glowing point on a hairline — echoes the string lights in the
+// venue footage. Used between sections instead of a flat divider.
+const SectionDivider = () => (
+  <div className="relative z-10 flex items-center justify-center py-3 px-6">
+    <span className="h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+    <span className="absolute w-1.5 h-1.5 rounded-full bg-[#d4af37] shadow-[0_0_12px_4px_rgba(212,175,55,0.45)] animate-thread-glow" />
+  </div>
 );
 
 const serviceCategories = [
@@ -105,10 +114,10 @@ const serviceCategories = [
 ];
 
 const processSteps = [
-  { icon: <MessageCircle size={22} />, title: "Consultation", desc: "We learn your vision, budget and the story you want your event to tell." },
-  { icon: <PenTool size={22} />, title: "Concept & Design", desc: "Custom themes and décor plans mapped out in detail, before a single vendor is booked." },
-  { icon: <Wand2 size={22} />, title: "Flawless Execution", desc: "Our team manages every vendor, timeline and moving part on the day itself." },
-  { icon: <PartyPopper size={22} />, title: "Celebration", desc: "You celebrate with your guests. We handle everything happening behind the scenes." }
+  { icon: <MessageCircle size={22} />, title: "Consultation", desc: "We talk through your date, guest count, budget and the kind of event you're picturing." },
+  { icon: <PenTool size={22} />, title: "Concept & Design", desc: "A full layout, décor direction and vendor plan, agreed before anything is booked." },
+  { icon: <Wand2 size={22} />, title: "Execution", desc: "Our team runs the timeline and manages every vendor on the day itself." },
+  { icon: <PartyPopper size={22} />, title: "Celebration", desc: "You and your guests enjoy the event. We handle what's happening behind it." }
 ];
 
 export default function App() {
@@ -168,9 +177,9 @@ export default function App() {
         const cards = gsap.utils.toArray('.service-card');
         if (cards.length > 0) {
           gsap.fromTo(cards,
-            { y: 40, opacity: 0 },
+            { y: 30, opacity: 0 },
             {
-              y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out",
+              y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: "power2.out",
               scrollTrigger: {
                 trigger: servicesRef.current,
                 start: "top 85%",
@@ -184,7 +193,7 @@ export default function App() {
         const steps = gsap.utils.toArray('.process-step');
         if (steps.length > 0) {
           gsap.fromTo(steps,
-            { y: 40, opacity: 0 },
+            { y: 30, opacity: 0 },
             {
               y: 0, opacity: 1, duration: 0.8, stagger: 0.12, ease: "power2.out",
               scrollTrigger: {
@@ -211,6 +220,13 @@ export default function App() {
         .animate-golden-shine {
           background-size: 200% auto;
           animation: golden-shine 4s linear infinite;
+        }
+        @keyframes thread-glow {
+          0%, 100% { opacity: 0.55; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.5); }
+        }
+        .animate-thread-glow {
+          animation: thread-glow 3s ease-in-out infinite;
         }
       `}</style>
 
@@ -242,31 +258,18 @@ export default function App() {
       <section ref={heroRef} className="relative z-10 flex flex-col justify-center items-center min-h-[100dvh] px-6 text-center">
         <div ref={contentRef} className="relative z-10 max-w-2xl flex flex-col items-center">
 
-          <span className="opacity-0 inline-flex items-center gap-3 text-[10px] md:text-xs font-bold tracking-[0.35em] uppercase text-[#d4af37] mb-6 drop-shadow-md">
-            <span className="h-px w-6 bg-[#d4af37]/60" />
-            Events for a Brighter Tomorrow
-            <span className="h-px w-6 bg-[#d4af37]/60" />
-          </span>
-
           <img
             src="/logo.png"
             alt="Zelaris Events Logo"
             className="w-56 md:w-72 lg:w-80 mb-6 opacity-0 drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] filter brightness-110"
           />
-          <p className="text-neutral-100 text-sm md:text-lg mb-7 max-w-lg mx-auto opacity-0 leading-snug font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+          <p className="text-neutral-100 text-sm md:text-lg mb-6 max-w-lg mx-auto opacity-0 leading-snug font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
             Personalized wedding concepts, A–Z event planning, and luxury hospitality across India.
           </p>
 
-          <div className="opacity-0 flex flex-wrap items-center justify-center gap-2 mb-9">
-            {["Weddings", "Corporate Events", "Destination Events", "VIP Hospitality"].map((tag) => (
-              <span
-                key={tag}
-                className="text-[11px] md:text-xs font-semibold tracking-wide text-neutral-100 bg-white/5 border border-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-sm drop-shadow-md"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          <p className="opacity-0 font-serif italic text-neutral-300 text-sm md:text-base tracking-wide mb-9 drop-shadow-md">
+            Weddings &middot; Corporate Events &middot; Destination Events &middot; VIP Hospitality
+          </p>
 
           <a
             href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20booking%20an%20event."
@@ -278,75 +281,68 @@ export default function App() {
           </a>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-300 opacity-70">
-          <span className="text-[10px] tracking-[0.3em] uppercase font-medium drop-shadow-md">Scroll</span>
-          <ChevronDown size={18} className="animate-bounce text-[#d4af37]" />
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
+          <span className="w-px h-10 bg-gradient-to-b from-transparent via-white/40 to-[#d4af37]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] shadow-[0_0_10px_3px_rgba(212,175,55,0.5)] animate-thread-glow" />
         </div>
       </section>
 
-      {/* Services Section */}
-      <section ref={servicesRef} className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-14">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d4af37]/60" />
-            <span className="text-[#d4af37] text-xs font-bold tracking-[0.3em] uppercase drop-shadow-md">What We Offer</span>
-            <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d4af37]/60" />
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">Our Expertise</h2>
-          <p className="text-neutral-200 max-w-xl mx-auto text-sm font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">Click on any service to explore our comprehensive offerings.</p>
+      <SectionDivider />
+
+      {/* Services Section — editorial list, not a card grid */}
+      <section ref={servicesRef} className="relative z-10 py-24 px-6 max-w-5xl mx-auto">
+        <div className="mb-16 max-w-xl">
+          <h2 className="font-serif italic text-4xl md:text-5xl font-medium tracking-tight mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">Our Expertise</h2>
+          <p className="text-neutral-300 text-sm md:text-base leading-relaxed drop-shadow-md">
+            Six areas of focus, each handled down to the smallest detail. Tap through any of them to see exactly what's included.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="flex flex-col">
           {serviceCategories.map((service, index) => (
             <div
               key={service.id}
               onClick={() => setActiveModal(index)}
-              className="service-card group relative cursor-pointer bg-black/30 opacity-0 backdrop-blur-md border border-white/15 p-7 rounded-2xl overflow-hidden hover:bg-black/45 hover:border-[#d4af37]/60 transition-all duration-300 hover:-translate-y-1 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+              className="service-card opacity-0 group cursor-pointer flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 py-8 border-b border-white/10 hover:bg-white/[0.03] transition-colors duration-300 px-3 -mx-3 rounded-xl"
             >
-              <span className="absolute -top-2 -right-1 text-6xl font-black text-white/[0.04] select-none tracking-tighter group-hover:text-[#d4af37]/10 transition-colors duration-300">
-                {String(service.id).padStart(2, '0')}
-              </span>
-
-              <div className="relative z-10">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] mb-5 group-hover:bg-[#d4af37]/20 group-hover:scale-110 transition-all duration-300 drop-shadow-md">
-                  {service.icon}
-                </div>
-                <h3 className="text-lg font-semibold mb-2 tracking-wide text-white drop-shadow-md">{service.title}</h3>
-                <p className="text-neutral-200 text-sm leading-relaxed mb-5 font-normal drop-shadow-md">{service.shortDesc}</p>
-                <span className="inline-flex items-center gap-1.5 text-xs text-[#d4af37] font-bold tracking-wider group-hover:gap-2.5 transition-all duration-300 uppercase drop-shadow-sm">
-                  Explore Details <ArrowRight size={14} />
-                </span>
+              <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center border border-[#d4af37]/30 bg-[#d4af37]/5 text-[#d4af37] group-hover:bg-[#d4af37]/15 group-hover:border-[#d4af37]/60 transition-all duration-300">
+                {service.icon}
               </div>
+              <div className="flex-1">
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-1.5 tracking-wide drop-shadow-md">{service.title}</h3>
+                <p className="text-neutral-300 text-sm md:text-base leading-relaxed max-w-lg drop-shadow-md">{service.shortDesc}</p>
+              </div>
+              <span className="shrink-0 text-xs font-semibold tracking-wider text-[#d4af37] uppercase underline-offset-4 group-hover:underline drop-shadow-sm self-start sm:self-center">
+                View Details
+              </span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Process Section */}
-      <section ref={processRef} className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-14">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d4af37]/60" />
-            <span className="text-[#d4af37] text-xs font-bold tracking-[0.3em] uppercase drop-shadow-md">Our Process</span>
-            <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d4af37]/60" />
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">From First Call to Final Toast</h2>
+      <SectionDivider />
+
+      {/* Process Section — steps sit on a connecting line, no numbering */}
+      <section ref={processRef} className="relative z-10 py-24 px-6 max-w-5xl mx-auto">
+        <div className="mb-16 max-w-xl">
+          <h2 className="font-serif italic text-4xl md:text-5xl font-medium tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">How It Comes Together</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {processSteps.map((step, i) => (
-            <div
-              key={step.title}
-              className="process-step opacity-0 relative bg-black/25 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center hover:border-[#d4af37]/50 hover:bg-black/40 transition-all duration-300"
-            >
-              <div className="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] drop-shadow-md">
-                {step.icon}
+        <div className="relative">
+          <span className="hidden md:block absolute top-7 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[#d4af37]/40 to-transparent" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6">
+            {processSteps.map((step) => (
+              <div key={step.title} className="process-step opacity-0 relative flex md:flex-col items-start md:items-center gap-5 md:gap-4 md:text-center">
+                <div className="relative shrink-0 w-14 h-14 rounded-full flex items-center justify-center border border-[#d4af37]/40 bg-black/40 backdrop-blur-md text-[#d4af37] z-10">
+                  {step.icon}
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-white mb-1.5 drop-shadow-md">{step.title}</h3>
+                  <p className="text-neutral-300 text-xs md:text-sm leading-relaxed md:max-w-[180px] md:mx-auto drop-shadow-md">{step.desc}</p>
+                </div>
               </div>
-              <span className="block text-[10px] font-bold tracking-[0.25em] text-[#d4af37]/70 mb-1.5 uppercase">Step {i + 1}</span>
-              <h3 className="text-base font-semibold text-white mb-2 drop-shadow-md">{step.title}</h3>
-              <p className="text-neutral-300 text-xs leading-relaxed drop-shadow-md">{step.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -366,15 +362,16 @@ export default function App() {
         </section>
       )}
 
+      <SectionDivider />
+
       {/* Closing CTA */}
-      <section className="relative z-10 py-24 px-6 text-center border-t border-white/10 mt-10">
-        <div className="max-w-2xl mx-auto">
-          <Sparkles className="mx-auto mb-5 text-[#d4af37]" size={30} />
-          <h2 className="text-3xl md:text-5xl font-bold mb-5 tracking-tight bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#d4af37] bg-clip-text text-transparent animate-golden-shine drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-            Let's Create Something Extraordinary
+      <section className="relative z-10 py-24 px-6 text-center">
+        <div className="max-w-xl mx-auto">
+          <h2 className="font-serif italic text-4xl md:text-6xl font-medium tracking-tight mb-6 bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#d4af37] bg-clip-text text-transparent animate-golden-shine drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+            Every Detail, Beautifully Arranged
           </h2>
-          <p className="text-neutral-200 text-sm md:text-base mb-8 max-w-lg mx-auto font-medium drop-shadow-md">
-            From intimate gatherings to grand celebrations, tell us your vision and we'll take care of the rest.
+          <p className="text-neutral-300 text-sm md:text-base mb-9 max-w-md mx-auto drop-shadow-md">
+            Share your date and vision on WhatsApp — we'll take it from there.
           </p>
           <a
             href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20booking%20an%20event."
@@ -406,7 +403,7 @@ export default function App() {
                 </div>
             </div>
 
-            <div className="md:text-right w-full md:w-auto">
+            <div className="md:text-right w-full md:w-auto md:self-end">
                 <h4 className="text-base font-semibold mb-5 text-white tracking-wide text-left md:text-right drop-shadow-md">Contact Info</h4>
                 <ul className="space-y-3 text-neutral-300 text-sm font-light flex flex-col items-start md:items-end">
                     <li className="flex items-center gap-2 justify-start md:justify-end w-full">
@@ -463,12 +460,11 @@ export default function App() {
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                 onClick={() => setActiveModal(null)}
             />
-            {/* Enlarged modal with robust frosted glass style */}
             <div className="relative bg-black/50 backdrop-blur-2xl border border-white/20 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-[0_16px_48px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in duration-300">
 
                 <div className="p-6 border-b border-white/15 flex justify-between items-center rounded-t-3xl bg-white/5">
                     <div className="flex items-center gap-4">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] drop-shadow-md">
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/5 text-[#d4af37] drop-shadow-md">
                             {serviceCategories[activeModal].icon}
                         </div>
                         <h3 className="text-2xl font-bold tracking-wide text-white drop-shadow-md">{serviceCategories[activeModal].title}</h3>
