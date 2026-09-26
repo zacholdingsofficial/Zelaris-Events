@@ -12,30 +12,35 @@ export default function ScrollVideo() {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d', { alpha: false });
     
-    let lastWidth = window.innerWidth;
+    let lastWidth = 0; 
     const images = [];
     const playhead = { frame: 0 };
 
     const updateCanvasSize = () => {
-      // Prevents mobile address bar from causing layout flashes
       if (window.innerWidth === lastWidth && canvas.width > 0) return;
       lastWidth = window.innerWidth;
 
       const dpr = window.devicePixelRatio || 1;
       
-      // 1. Set internal drawing resolution
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+      // Make the canvas permanently 5% larger than the screen to hide blur edge-bleeding
+      const paddedWidth = window.innerWidth * 1.05;
+      const paddedHeight = window.innerHeight * 1.05;
       
-      // 2. STRETCH FIX: Lock CSS dimensions so the browser cannot warp the aspect ratio when the address bar hides
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
+      canvas.width = paddedWidth * dpr;
+      canvas.height = paddedHeight * dpr;
+      
+      canvas.style.width = `${paddedWidth}px`;
+      canvas.style.height = `${paddedHeight}px`;
       
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = 'high';
       
       render(); 
     };
+
+    // FIX 1: Force the canvas to calculate its full-screen size immediately on mount, 
+    // without waiting for any images to load.
+    updateCanvasSize();
 
     function render() {
       if (!canvas || !context) return;
@@ -56,22 +61,32 @@ export default function ScrollVideo() {
       }
     }
 
-    const loadFirstFrame = () => {
-      const firstImg = new Image();
-      firstImg.src = `/frames_optimized/frame_001.webp`;
-      
-      firstImg.onload = () => {
-        images[0] = firstImg;
-        updateCanvasSize(); 
-        loadRemainingFrames();
-      };
-    };
-
     const loadRemainingFrames = () => {
       for (let i = 2; i <= frameCount; i++) {
         const img = new Image();
         img.src = `/frames_optimized/frame_${i.toString().padStart(3, '0')}.webp`;
         images[i - 1] = img; 
+      }
+    };
+
+    const loadFirstFrame = () => {
+      const firstImg = new Image();
+      
+      // FIX 2: Define what happens when it loads FIRST
+      const handleLoad = () => {
+        images[0] = firstImg;
+        render(); 
+        loadRemainingFrames();
+      };
+
+      // Attach the listener before setting the source
+      firstImg.onload = handleLoad;
+      firstImg.src = `/frames_optimized/frame_001.webp`;
+      
+      // FIX 3: If the browser cached it instantly from our CSS background, fire it manually
+      if (firstImg.complete && firstImg.naturalWidth > 0) {
+        firstImg.onload = null; // Prevent double firing
+        handleLoad();
       }
     };
 
@@ -91,7 +106,9 @@ export default function ScrollVideo() {
     });
 
     const blurTween = gsap.fromTo(canvas, 
-      { filter: 'contrast(1.1) saturate(1.1) brightness(0.9) blur(0px)' },
+      { 
+        filter: 'contrast(1.1) saturate(1.1) brightness(0.9) blur(0px)'
+      },
       { 
         filter: 'contrast(1.1) saturate(1.1) brightness(0.3) blur(24px)',
         ease: "power2.in",
@@ -125,14 +142,13 @@ export default function ScrollVideo() {
   }, [frameCount]);
 
   return (
-    // BLACK SCREEN FIX: Pre-loads the first frame using CSS so the screen is instantly painted
     <div 
       className="fixed inset-0 z-0 w-full h-full bg-black overflow-hidden pointer-events-none bg-cover bg-center"
       style={{ backgroundImage: 'url("/frames_optimized/frame_001.webp")' }}
     >
       <canvas 
         ref={canvasRef} 
-        className="block origin-center" 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 block origin-center" 
       />
       <div 
         className="absolute inset-0 opacity-[0.04] mix-blend-overlay" 
