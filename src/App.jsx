@@ -314,15 +314,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Floating WhatsApp Action Button */}
-      <a
-        href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20planning%20an%20event."
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-[#25D366] text-white p-3.5 rounded-full shadow-[0_0_25px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform z-50 flex items-center justify-center"
-      >
-        <WhatsAppIcon size={26} />
-      </a>
+      
 
       {/* True Glassmorphism Modal */}
       {activeModal !== null && (
