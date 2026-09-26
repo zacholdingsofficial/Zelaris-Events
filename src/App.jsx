@@ -112,13 +112,9 @@ export default function App() {
   const servicesRef = useRef(null);
   const lenisRef = useRef(null);
 
-  // 1. Lenis & GSAP Master Sync Setup (Updated for maximum fluidness)
+  // 1. Lenis & GSAP Master Sync Setup
   useEffect(() => {
-    // Lower lerp = smoother, more fluid momentum (default is 0.1)
-    const lenis = new Lenis({
-      lerp: 0.05, 
-      smoothWheel: true
-    });
+    const lenis = new Lenis();
     lenisRef.current = lenis;
 
     lenis.on('scroll', ScrollTrigger.update);
