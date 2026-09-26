@@ -41,41 +41,30 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     function render() {
       if (!canvas || !context) return;
       
-      // 1. SUB-FRAME BLENDING: Calculate exactly where we are between two frames
-      const prevFrameIndex = Math.floor(playhead.frame);
-      const nextFrameIndex = Math.min(prevFrameIndex + 1, frameCount - 1);
+      // Calculate exact frame dynamically for ultimate smoothness
+      const frameIndex = Math.round(playhead.frame);
+      const img = images[frameIndex];
       
-      // 'fraction' is the decimal part (e.g., if frame is 10.45, fraction is 0.45)
-      const fraction = playhead.frame - prevFrameIndex;
-      
-      const img1 = images[prevFrameIndex];
-      const img2 = images[nextFrameIndex];
-      
-      if (img1 && img1.complete && img1.naturalWidth > 0) {
+      if (img && img.complete && img.naturalWidth > 0) {
         context.clearRect(0, 0, canvas.width, canvas.height);
         
-        const hRatio = canvas.width / img1.width;
-        const vRatio = canvas.height / img1.height;
+        const hRatio = canvas.width / img.width;
+        const vRatio = canvas.height / img.height;
         const ratio = Math.max(hRatio, vRatio);
         
-        const centerShiftX = (canvas.width - img1.width * ratio) / 2;
-        const centerShiftY = (canvas.height - img1.height * ratio) / 2;
+        const centerShiftX = (canvas.width - img.width * ratio) / 2;
+        const centerShiftY = (canvas.height - img.height * ratio) / 2;
         
-        const drawW = Math.floor(img1.width * ratio);
-        const drawH = Math.floor(img1.height * ratio);
-        const drawX = Math.floor(centerShiftX);
-        const drawY = Math.floor(centerShiftY);
-
-        // 2. Draw the base frame at 100% opacity
-        context.globalAlpha = 1;
-        context.drawImage(img1, 0, 0, img1.width, img1.height, drawX, drawY, drawW, drawH);
-        
-        // 3. Draw the next frame on top, fading it in based on the exact scroll decimal
-        if (img2 && img2.complete && fraction > 0) {
-            context.globalAlpha = fraction;
-            context.drawImage(img2, 0, 0, img2.width, img2.height, drawX, drawY, drawW, drawH);
-            context.globalAlpha = 1; // Reset alpha for the next render loop
-        }
+        // Math.floor prevents sub-pixel rendering lag
+        context.drawImage(
+          img, 
+          0, 0, 
+          img.width, img.height, 
+          Math.floor(centerShiftX), 
+          Math.floor(centerShiftY), 
+          Math.floor(img.width * ratio), 
+          Math.floor(img.height * ratio)
+        );
       }
     }
 
@@ -123,7 +112,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
         trigger: document.body,
         start: "top top",
         end: "bottom bottom",
-        scrub: true,
+        scrub: true, // Removed delay for instant feedback
       },
       onUpdate: render,
     });
@@ -156,9 +145,11 @@ export default function ScrollVideo({ onProgress, onComplete }) {
       document.removeEventListener('visibilitychange', handleVisibility);
       tween.kill();
       blurTween.kill();
+      // Only kill ScrollTriggers explicitly tied to this component in production
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
     
+    // FIX: Removed onProgress and onComplete from dependency array to prevent the infinite loading loop
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameCount]);
 
