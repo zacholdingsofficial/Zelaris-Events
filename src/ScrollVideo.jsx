@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function ScrollVideo() {
+export default function ScrollVideo({ onProgress, onComplete }) {
   const canvasRef = useRef(null);
   const frameCount = 240; 
 
@@ -15,19 +15,18 @@ export default function ScrollVideo() {
     let lastWidth = 0; 
     const images = [];
     const playhead = { frame: 0 };
+    let loadedCount = 0;
 
     const updateCanvasSize = () => {
       if (window.innerWidth === lastWidth && canvas.width > 0) return;
       lastWidth = window.innerWidth;
 
       const dpr = window.devicePixelRatio || 1;
-      
       const paddedWidth = window.innerWidth * 1.05;
       const paddedHeight = window.innerHeight * 1.05;
       
       canvas.width = paddedWidth * dpr;
       canvas.height = paddedHeight * dpr;
-      
       canvas.style.width = `${paddedWidth}px`;
       canvas.style.height = `${paddedHeight}px`;
       
@@ -54,7 +53,6 @@ export default function ScrollVideo() {
         const centerShiftX = (canvas.width - img.width * ratio) / 2;
         const centerShiftY = (canvas.height - img.height * ratio) / 2;
         
-        // SMOOTHNESS FIX: Math.floor prevents expensive sub-pixel anti-aliasing calculations
         context.drawImage(
           img, 
           0, 0, 
@@ -67,14 +65,20 @@ export default function ScrollVideo() {
       }
     }
 
+    const trackProgress = () => {
+      loadedCount++;
+      const percent = Math.floor((loadedCount / frameCount) * 100);
+      if (onProgress) onProgress(percent);
+      if (loadedCount === frameCount && onComplete) onComplete();
+    };
+
     const loadRemainingFrames = () => {
       for (let i = 2; i <= frameCount; i++) {
         const img = new Image();
         img.src = `/frames_optimized/frame_${i.toString().padStart(3, '0')}.webp`;
         
-        // SMOOTHNESS FIX: Force the browser to decode the image in the background
-        // so it doesn't freeze the main thread when the user scrolls to it
-        img.decode().catch(() => {}); 
+        // Count the frame whether it succeeds or fails so the loader never gets stuck
+        img.decode().then(trackProgress).catch(trackProgress); 
         
         images[i - 1] = img; 
       }
@@ -86,6 +90,7 @@ export default function ScrollVideo() {
       const handleLoad = () => {
         images[0] = firstImg;
         render(); 
+        trackProgress();
         loadRemainingFrames();
       };
 
@@ -114,9 +119,7 @@ export default function ScrollVideo() {
     });
 
     const blurTween = gsap.fromTo(canvas, 
-      { 
-        filter: 'contrast(1.1) saturate(1.1) brightness(0.9) blur(0px)'
-      },
+      { filter: 'contrast(1.1) saturate(1.1) brightness(0.9) blur(0px)' },
       { 
         filter: 'contrast(1.1) saturate(1.1) brightness(0.3) blur(24px)',
         ease: "power2.in",
@@ -130,9 +133,7 @@ export default function ScrollVideo() {
     );
 
     const handleVisibility = () => {
-      if (!document.hidden) {
-        requestAnimationFrame(render);
-      }
+      if (!document.hidden) requestAnimationFrame(render);
     };
 
     window.addEventListener('resize', updateCanvasSize);
@@ -147,21 +148,15 @@ export default function ScrollVideo() {
       blurTween.kill();
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
-  }, [frameCount]);
+  }, [frameCount, onProgress, onComplete]);
 
   return (
     <div 
       className="fixed inset-0 z-0 w-full h-full bg-black overflow-hidden pointer-events-none bg-cover bg-center"
       style={{ backgroundImage: 'url("/frames_optimized/frame_001.webp")' }}
     >
-      <canvas 
-        ref={canvasRef} 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 block origin-center" 
-      />
-      <div 
-        className="absolute inset-0 opacity-[0.04] mix-blend-overlay" 
-        style={{ backgroundImage: 'url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Dissolve_Noise_Texture.png")', backgroundRepeat: 'repeat' }}
-      />
+      <canvas ref={canvasRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 block origin-center" />
+      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Dissolve_Noise_Texture.png")', backgroundRepeat: 'repeat' }} />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
     </div>
   );

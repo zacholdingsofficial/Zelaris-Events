@@ -103,9 +103,13 @@ const serviceCategories = [
 
 export default function App() {
   const [activeModal, setActiveModal] = useState(null);
+  
+  // New Loader State
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
+  
   const heroRef = useRef(null);
   const contentRef = useRef(null);
-  const bgRef = useRef(null);
   const servicesRef = useRef(null);
   const lenisRef = useRef(null);
 
@@ -119,50 +123,50 @@ export default function App() {
     }
     requestAnimationFrame(raf);
 
-    if (contentRef.current) {
-        gsap.fromTo(
-        contentRef.current.children,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: "power3.out", delay: 0.1 }
-        );
-    }
-
-    if (servicesRef.current) {
-        const cards = gsap.utils.toArray('.service-card');
-        if (cards.length > 0) {
-            gsap.fromTo(cards, 
-            { y: 40, opacity: 0 },
-            {
-                y: 0,
-                opacity: 1,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power2.out",
-                scrollTrigger: {
-                trigger: servicesRef.current,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-                }
-            }
-            );
-        }
-    }
-
     return () => {
       lenis.destroy();
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 
+  // Handle Scroll Locking (Modals and Loader)
   useEffect(() => {
-    if (activeModal !== null) {
+    // If not fully loaded OR a modal is open, lock the scroll.
+    if (!isLoaded || activeModal !== null) {
       document.body.style.overflow = 'hidden';
       if (lenisRef.current) lenisRef.current.stop();
     } else {
       document.body.style.overflow = 'unset';
       if (lenisRef.current) lenisRef.current.start();
+      
+      // Trigger entrance animations only after the loader disappears
+      if (contentRef.current) {
+        gsap.fromTo(
+          contentRef.current.children,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: "power3.out", delay: 0.1 }
+        );
+      }
+
+      if (servicesRef.current) {
+        const cards = gsap.utils.toArray('.service-card');
+        if (cards.length > 0) {
+            gsap.fromTo(cards, 
+            { y: 40, opacity: 0 },
+            {
+                y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out",
+                scrollTrigger: {
+                  trigger: servicesRef.current,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse"
+                }
+            });
+        }
+      }
+      
+      ScrollTrigger.refresh();
     }
-  }, [activeModal]);
+  }, [isLoaded, activeModal]);
 
   return (
     <div className="relative min-h-screen bg-transparent text-white font-sans selection:bg-amber-500 selection:text-white overflow-hidden">
@@ -178,11 +182,34 @@ export default function App() {
         }
       `}</style>
 
+      {/* The Glassmorphism Loading Screen */}
+      <div 
+        className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-2xl transition-opacity duration-1000 ${isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+        <img 
+          src="/logo.png" 
+          alt="Zelaris Events Logo" 
+          className="w-48 md:w-56 mb-10 animate-pulse drop-shadow-[0_0_25px_rgba(212,175,55,0.3)]"
+        />
+        <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+          <div 
+            className="h-full bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#aa7c11] transition-all duration-300 ease-out"
+            style={{ width: `${loadProgress}%` }}
+          />
+        </div>
+        <p className="text-[#d4af37] mt-4 font-semibold tracking-widest text-sm drop-shadow-md">
+          {loadProgress}%
+        </p>
+      </div>
+
       <div className="fixed inset-0 z-0">
-        <ScrollVideo />
+        <ScrollVideo 
+          onProgress={setLoadProgress} 
+          onComplete={() => setIsLoaded(true)} 
+        />
       </div>
       
-      {/* Hero Section - Box removed, logo floats directly with drop shadow for clarity */}
+      {/* Hero Section */}
       <section ref={heroRef} className="relative z-10 flex flex-col justify-center items-center min-h-[100dvh] px-6 text-center">
         <div ref={contentRef} className="relative z-10 max-w-2xl flex flex-col items-center">
           <img 
@@ -313,8 +340,6 @@ export default function App() {
             </div>
         </div>
       </footer>
-
-      
 
       {/* True Glassmorphism Modal */}
       {activeModal !== null && (
