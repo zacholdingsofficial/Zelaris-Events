@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Utensils, Sparkles, Wand2, Crown, CalendarCheck, Camera, X, MapPin,
-  CheckCircle2, MessageCircle, PenTool, PartyPopper, ArrowUpRight
-} from 'lucide-react';
+import { Utensils, Sparkles, Wand2, Crown, CalendarCheck, Camera, X, MapPin, CheckCircle2 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
@@ -10,7 +7,7 @@ import ScrollVideo from './ScrollVideo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const galleryImages = [];
+const galleryImages = []; 
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" className={className}>
@@ -26,26 +23,11 @@ const InstagramIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
-// Thin bright line along the top edge of a glass surface — the detail that
-// reads as "glass catching light" rather than just a blurred rectangle.
-const GlassEdge = ({ inset = "inset-x-6" }) => (
-  <span className={`pointer-events-none absolute ${inset} top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent`} />
-);
-
-// A single glowing point on a hairline — echoes the string lights in the
-// venue footage. Used between sections instead of a flat divider.
-const SectionDivider = () => (
-  <div className="relative z-10 flex items-center justify-center py-3 px-6">
-    <span className="h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-    <span className="absolute w-1.5 h-1.5 rounded-full bg-[#d4af37] shadow-[0_0_12px_4px_rgba(212,175,55,0.45)] animate-thread-glow" />
-  </div>
-);
-
 const serviceCategories = [
-  {
+  { 
     id: 1,
-    icon: <Crown size={26} />,
-    title: "Planning & Hospitality",
+    icon: <Crown size={28} />, 
+    title: "Planning & Hospitality", 
     shortDesc: "A–Z event planning, VIP hospitality, and flawless coordination.",
     details: [
       "Complete A–Z event planning & personalized concepts",
@@ -58,10 +40,10 @@ const serviceCategories = [
       "College functions, convocations & corporate events"
     ]
   },
-  {
+  { 
     id: 2,
-    icon: <Sparkles size={26} />,
-    title: "Theme & Décor",
+    icon: <Sparkles size={28} />, 
+    title: "Theme & Décor", 
     shortDesc: "Custom stages, floral designs, and premium venue transformations.",
     details: [
       "Theme-based wedding & premium stage decorations",
@@ -70,10 +52,10 @@ const serviceCategories = [
       "Seasonal themes (Christmas, Onam, etc.) & party services"
     ]
   },
-  {
+  { 
     id: 3,
-    icon: <Utensils size={26} />,
-    title: "Premium Catering",
+    icon: <Utensils size={28} />, 
+    title: "Premium Catering", 
     shortDesc: "Customized menus, diverse counters, and efficient catering staff.",
     details: [
       "Premium catering with custom-tailored delicious menus",
@@ -82,10 +64,10 @@ const serviceCategories = [
       "Complete Iftar party packages (food, decor & managing)"
     ]
   },
-  {
+  { 
     id: 4,
-    icon: <Wand2 size={26} />,
-    title: "Grand Entries & VFX",
+    icon: <Wand2 size={28} />, 
+    title: "Grand Entries & VFX", 
     shortDesc: "Pyrotechnics, LED walls, and spectacular bride & groom entries.",
     details: [
       "Spectacular bride & groom entry concepts with VFX",
@@ -94,10 +76,10 @@ const serviceCategories = [
       "Luxury car rentals, live music, DJs & celebrity bookings"
     ]
   },
-  {
+  { 
     id: 5,
-    icon: <Camera size={26} />,
-    title: "Cinematic Media",
+    icon: <Camera size={28} />, 
+    title: "Cinematic Media", 
     shortDesc: "Professional photography, drone coverage, and highlight reels.",
     details: [
       "Cinematic videography & professional photography",
@@ -108,7 +90,7 @@ const serviceCategories = [
   },
   {
     id: 6,
-    icon: <CalendarCheck size={26} />,
+    icon: <CalendarCheck size={28} />,
     title: "Scope & Future",
     shortDesc: "Meeting the increasing demand for professional event organizers.",
     details: [
@@ -119,33 +101,15 @@ const serviceCategories = [
   }
 ];
 
-const processSteps = [
-  { icon: <MessageCircle size={22} />, title: "Consultation", desc: "We talk through your date, guest count, budget and the kind of event you're picturing." },
-  { icon: <PenTool size={22} />, title: "Concept & Design", desc: "A full layout, décor direction and vendor plan, agreed before anything is booked." },
-  { icon: <Wand2 size={22} />, title: "Execution", desc: "Our team runs the timeline and manages every vendor on the day itself." },
-  { icon: <PartyPopper size={22} />, title: "Celebration", desc: "You and your guests enjoy the event. We handle what's happening behind it." }
-];
-
-// Shared glass-surface treatment so every panel on the page reads as one
-// consistent material: dark tinted glass, soft border, inset top sheen,
-// a warm (gold-tinted, not flat black) drop shadow.
-const glassCard =
-  "relative bg-black/30 backdrop-blur-xl border border-white/10 " +
-  "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_10px_36px_-6px_rgba(0,0,0,0.5)]";
-const glassCardHover =
-  "hover:bg-black/40 hover:border-[#d4af37]/40 " +
-  "hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_16px_46px_-6px_rgba(212,175,55,0.18)]";
-
 export default function App() {
   const [activeModal, setActiveModal] = useState(null);
-
+  
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
-
+  
   const heroRef = useRef(null);
   const contentRef = useRef(null);
   const servicesRef = useRef(null);
-  const processRef = useRef(null);
   const lenisRef = useRef(null);
 
   // 1. Lenis & GSAP Master Sync Setup
@@ -158,7 +122,7 @@ export default function App() {
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
-
+    
     gsap.ticker.lagSmoothing(0, 0);
 
     return () => {
@@ -178,16 +142,6 @@ export default function App() {
     }
   }, [isLoaded, activeModal]);
 
-  // 2b. Close modal on Escape — keyboard users shouldn't need the mouse
-  useEffect(() => {
-    if (activeModal === null) return;
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') setActiveModal(null);
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [activeModal]);
-
   // 3. Trigger Content Reveal (Only runs once when fully loaded)
   useEffect(() => {
     if (isLoaded) {
@@ -202,50 +156,25 @@ export default function App() {
       if (servicesRef.current) {
         const cards = gsap.utils.toArray('.service-card');
         if (cards.length > 0) {
-          gsap.fromTo(cards,
-            { y: 30, opacity: 0 },
+            gsap.fromTo(cards, 
+            { y: 40, opacity: 0 },
             {
-              y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: "power2.out",
-              scrollTrigger: {
-                trigger: servicesRef.current,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
+                y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out",
+                scrollTrigger: {
+                  trigger: servicesRef.current,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse"
+                }
             });
         }
       }
-
-      if (processRef.current) {
-        const steps = gsap.utils.toArray('.process-step');
-        if (steps.length > 0) {
-          gsap.fromTo(steps,
-            { y: 30, opacity: 0 },
-            {
-              y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out",
-              scrollTrigger: {
-                trigger: processRef.current,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
-            });
-        }
-      }
-
       ScrollTrigger.refresh();
     }
   }, [isLoaded]);
 
-  const openModal = (index) => setActiveModal(index);
-  const handleCardKeyDown = (e, index) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openModal(index);
-    }
-  };
-
   return (
     <div className="relative min-h-screen bg-transparent text-white font-sans selection:bg-amber-500 selection:text-white overflow-hidden">
-
+      
       <style>{`
         @keyframes golden-shine {
           0% { background-position: 200% center; }
@@ -255,26 +184,19 @@ export default function App() {
           background-size: 200% auto;
           animation: golden-shine 4s linear infinite;
         }
-        @keyframes thread-glow {
-          0%, 100% { opacity: 0.55; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.5); }
-        }
-        .animate-thread-glow {
-          animation: thread-glow 3s ease-in-out infinite;
-        }
       `}</style>
 
       {/* Loading Screen */}
-      <div
+      <div 
         className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-2xl transition-opacity duration-1000 ${isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
       >
-        <img
-          src="/logo.png"
-          alt="Zelaris Events Logo"
+        <img 
+          src="/logo.png" 
+          alt="Zelaris Events Logo" 
           className="w-48 md:w-56 mb-10 animate-pulse drop-shadow-[0_0_25px_rgba(212,175,55,0.3)]"
         />
         <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.2)]">
-          <div
+          <div 
             className="h-full bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#aa7c11] transition-all duration-300 ease-out"
             style={{ width: `${loadProgress}%` }}
           />
@@ -282,105 +204,54 @@ export default function App() {
       </div>
 
       <div className="fixed inset-0 z-0">
-        <ScrollVideo
-          onProgress={setLoadProgress}
-          onComplete={() => setIsLoaded(true)}
+        <ScrollVideo 
+          onProgress={setLoadProgress} 
+          onComplete={() => setIsLoaded(true)} 
         />
       </div>
-
-      {/* Hero Section — content now sits inside a frosted glass panel over the video */}
+      
+      {/* Hero Section */}
       <section ref={heroRef} className="relative z-10 flex flex-col justify-center items-center min-h-[100dvh] px-6 text-center">
-        <div className={`relative z-10 w-full max-w-2xl ${glassCard} rounded-[2rem] px-7 py-12 md:px-16 md:py-16`}>
-          <GlassEdge inset="inset-x-10" />
-          <div ref={contentRef} className="flex flex-col items-center">
-
-            <img
-              src="/logo.png"
-              alt="Zelaris Events Logo"
-              className="w-56 md:w-72 lg:w-80 mb-6 opacity-0 drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] filter brightness-110"
-            />
-            <p className="text-neutral-100 text-sm md:text-lg mb-6 max-w-lg mx-auto opacity-0 leading-snug font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-              Personalized wedding concepts, A–Z event planning, and luxury hospitality across India.
-            </p>
-
-            <p className="opacity-0 font-serif italic text-neutral-300 text-sm md:text-base tracking-wide mb-9 drop-shadow-md">
-              Weddings &middot; Corporate Events &middot; Destination Events &middot; VIP Hospitality
-            </p>
-
-            <a
-              href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20booking%20an%20event."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gradient-to-r from-[#d4af37] to-[#aa7c11] hover:from-[#e5c558] hover:to-[#c49215] opacity-0 text-black px-8 py-3.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.4)] inline-block text-sm tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            >
-              Book Your Event
-            </a>
-          </div>
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <span className="w-px h-10 bg-gradient-to-b from-transparent via-white/40 to-[#d4af37]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] shadow-[0_0_10px_3px_rgba(212,175,55,0.5)] animate-thread-glow" />
+        <div ref={contentRef} className="relative z-10 max-w-2xl flex flex-col items-center">
+          <img 
+            src="/logo.png" 
+            alt="Zelaris Events Logo" 
+            className="w-56 md:w-72 lg:w-80 mb-6 opacity-0 drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] filter brightness-110"
+          />
+          <p className="text-neutral-100 text-sm md:text-lg mb-8 max-w-lg mx-auto opacity-0 leading-snug font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+            Personalized wedding concepts, A–Z event planning, and luxury hospitality across India.
+          </p>
+          <a 
+            href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20booking%20an%20event."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gradient-to-r from-[#d4af37] to-[#aa7c11] hover:from-[#e5c558] hover:to-[#c49215] opacity-0 text-black px-8 py-3.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.4)] inline-block text-sm tracking-wide"
+          >
+            Book Your Event
+          </a>
         </div>
       </section>
 
-      <SectionDivider />
-
-      {/* Services Section — frosted glass tiles, View Details pinned bottom-right of every card */}
-      <section ref={servicesRef} className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
-        <div className="mb-14 max-w-xl">
-          <h2 className="font-serif italic text-4xl md:text-5xl font-medium tracking-tight mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">Our Expertise</h2>
-          <p className="text-neutral-300 text-sm md:text-base leading-relaxed drop-shadow-md">
-            Six areas of focus, each handled down to the smallest detail. Tap through any of them to see exactly what's included.
-          </p>
+      {/* Services Section */}
+      <section ref={servicesRef} className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">Our Expertise</h2>
+          <p className="text-neutral-200 max-w-xl mx-auto text-sm font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">Click on any service to explore our comprehensive offerings.</p>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {serviceCategories.map((service, index) => (
-            <div
-              key={service.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => openModal(index)}
-              onKeyDown={(e) => handleCardKeyDown(e, index)}
-              aria-label={`View details for ${service.title}`}
-              className={`service-card opacity-0 group cursor-pointer flex flex-col rounded-2xl p-6 transition-all duration-300 ${glassCard} ${glassCardHover} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37]/70`}
+            <div 
+              key={index} 
+              onClick={() => setActiveModal(index)}
+              className="service-card cursor-pointer bg-black/30 opacity-0 backdrop-blur-md border border-white/15 p-6 rounded-2xl hover:bg-black/45 hover:border-[#d4af37]/60 transition-all duration-300 group hover:-translate-y-1 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
             >
-              <GlassEdge inset="inset-x-5" />
-              <div className="w-14 h-14 rounded-full flex items-center justify-center border border-[#d4af37]/30 bg-[#d4af37]/10 backdrop-blur-md text-[#d4af37] mb-5 group-hover:bg-[#d4af37]/20 group-hover:scale-105 transition-all duration-300">
+              <div className="text-[#d4af37] mb-4 group-hover:scale-110 transition-transform duration-300 origin-left drop-shadow-md">
                 {service.icon}
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2 tracking-wide drop-shadow-md">{service.title}</h3>
-              <p className="text-neutral-300 text-sm leading-relaxed drop-shadow-md flex-1">{service.shortDesc}</p>
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-end gap-1.5 text-xs font-semibold tracking-wider text-[#d4af37] uppercase">
-                <span className="group-hover:underline underline-offset-4">View Details</span>
-                <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* Process Section — same glass-tile system, no step numbers */}
-      <section ref={processRef} className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
-        <div className="mb-14 max-w-xl">
-          <h2 className="font-serif italic text-4xl md:text-5xl font-medium tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">How It Comes Together</h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-          {processSteps.map((step) => (
-            <div
-              key={step.title}
-              className={`process-step opacity-0 flex flex-col items-center text-center rounded-2xl p-6 transition-all duration-300 ${glassCard} ${glassCardHover}`}
-            >
-              <GlassEdge inset="inset-x-5" />
-              <div className="mb-4 w-14 h-14 rounded-full flex items-center justify-center border border-[#d4af37]/30 bg-[#d4af37]/10 backdrop-blur-md text-[#d4af37]">
-                {step.icon}
-              </div>
-              <h3 className="text-base font-semibold text-white mb-2 drop-shadow-md">{step.title}</h3>
-              <p className="text-neutral-300 text-sm leading-relaxed drop-shadow-md">{step.desc}</p>
+              <h3 className="text-lg font-semibold mb-2 tracking-wide text-white drop-shadow-md">{service.title}</h3>
+              <p className="text-neutral-200 text-sm leading-relaxed mb-5 font-normal drop-shadow-md">{service.shortDesc}</p>
+              <span className="text-xs text-[#d4af37] font-bold tracking-wider group-hover:underline underline-offset-4 uppercase drop-shadow-sm">Read Details &rarr;</span>
             </div>
           ))}
         </div>
@@ -402,49 +273,26 @@ export default function App() {
         </section>
       )}
 
-      <SectionDivider />
-
-      {/* Closing CTA — glass panel, matching the hero */}
-      <section className="relative z-10 py-24 px-6 text-center">
-        <div className={`max-w-2xl mx-auto ${glassCard} rounded-[2rem] px-8 py-14 md:px-16 md:py-16`}>
-          <GlassEdge inset="inset-x-10" />
-          <h2 className="font-serif italic text-4xl md:text-6xl font-medium tracking-tight mb-6 bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#d4af37] bg-clip-text text-transparent animate-golden-shine drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-            Every Detail, Beautifully Arranged
-          </h2>
-          <p className="text-neutral-300 text-sm md:text-base mb-9 max-w-md mx-auto drop-shadow-md">
-            Share your date and vision on WhatsApp — we'll take it from there.
-          </p>
-          <a
-            href="https://wa.me/919037159997?text=Hi%20Zelaris%20Events!%20I'd%20like%20to%20inquire%20about%20booking%20an%20event."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#d4af37] to-[#aa7c11] hover:from-[#e5c558] hover:to-[#c49215] text-black px-8 py-3.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-[0_0_25px_rgba(212,175,55,0.4)] text-sm tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          >
-            <WhatsAppIcon size={16} /> Start Planning Now
-          </a>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="relative z-10 bg-black/50 backdrop-blur-2xl border-t border-white/15 pt-16 pb-8 px-6 mt-20">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10 mb-10">
-
+            
             <div className="max-w-sm">
                 <img src="/logo.png" alt="Zelaris Events" className="w-40 mb-5 opacity-90 drop-shadow-md" />
                 <p className="text-neutral-300 text-sm leading-relaxed mb-5 font-light drop-shadow-md">
                     Events for a brighter tomorrow. Providing budget-friendly and luxury services anywhere in India.
                 </p>
                 <div className="flex gap-4">
-                    <a href="#" aria-label="Instagram" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37] rounded-full">
+                    <a href="#" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md">
                         <InstagramIcon size={20} />
                     </a>
-                    <a href="https://wa.me/919037159997" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37] rounded-full">
+                    <a href="https://wa.me/919037159997" target="_blank" rel="noopener noreferrer" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md">
                         <WhatsAppIcon size={20} />
                     </a>
                 </div>
             </div>
 
-            <div className="md:text-right w-full md:w-auto md:self-end">
+            <div className="md:text-right w-full md:w-auto">
                 <h4 className="text-base font-semibold mb-5 text-white tracking-wide text-left md:text-right drop-shadow-md">Contact Info</h4>
                 <ul className="space-y-3 text-neutral-300 text-sm font-light flex flex-col items-start md:items-end">
                     <li className="flex items-center gap-2 justify-start md:justify-end w-full">
@@ -461,14 +309,14 @@ export default function App() {
 
         <div className="max-w-6xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-400 font-light">
             <p>&copy; {new Date().getFullYear()} Zelaris Events. All rights reserved.</p>
-
+            
             <p className="hidden md:block font-serif tracking-[0.25em] uppercase bg-gradient-to-r from-[#d4af37] via-[#fff3cc] to-[#d4af37] bg-clip-text text-transparent animate-golden-shine font-semibold">
               A ZAC Product
             </p>
-
-            <a
-                href="https://wa.me/917558957246"
-                target="_blank"
+            
+            <a 
+                href="https://wa.me/917558957246" 
+                target="_blank" 
                 rel="noopener noreferrer"
                 className="hidden md:block font-serif italic text-base text-neutral-400 hover:text-[#d4af37] transition-colors"
                 title="Contact Developer"
@@ -481,9 +329,9 @@ export default function App() {
                   A ZAC Product
                 </p>
                 <span className="text-white/20">|</span>
-                <a
-                    href="https://wa.me/917558957246"
-                    target="_blank"
+                <a 
+                    href="https://wa.me/917558957246" 
+                    target="_blank" 
                     rel="noopener noreferrer"
                     className="font-serif italic text-base text-neutral-400 hover:text-[#d4af37] transition-colors"
                     title="Contact Developer"
@@ -496,30 +344,24 @@ export default function App() {
 
       {/* True Glassmorphism Modal */}
       {activeModal !== null && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={serviceCategories[activeModal].title}
-        >
-            <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div 
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                 onClick={() => setActiveModal(null)}
             />
-            <div className="relative bg-black/50 backdrop-blur-2xl border border-white/20 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in duration-300">
-                <GlassEdge inset="inset-x-8" />
-
+            {/* Enlarged modal with robust frosted glass style */}
+            <div className="relative bg-black/50 backdrop-blur-2xl border border-white/20 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-[0_16px_48px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in duration-300">
+                
                 <div className="p-6 border-b border-white/15 flex justify-between items-center rounded-t-3xl bg-white/5">
                     <div className="flex items-center gap-4">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10 backdrop-blur-md text-[#d4af37] drop-shadow-md">
+                        <div className="text-[#d4af37] drop-shadow-md">
                             {serviceCategories[activeModal].icon}
                         </div>
                         <h3 className="text-2xl font-bold tracking-wide text-white drop-shadow-md">{serviceCategories[activeModal].title}</h3>
                     </div>
-                    <button
+                    <button 
                         onClick={() => setActiveModal(null)}
-                        aria-label="Close"
-                        className="text-neutral-300 hover:text-white bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37]"
+                        className="text-neutral-300 hover:text-white bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-all"
                     >
                         <X size={20} />
                     </button>
@@ -538,7 +380,7 @@ export default function App() {
             </div>
         </div>
       )}
-
+      
     </div>
   );
 }
