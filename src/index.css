@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* Completely hide the scrollbar globally */
+body::-webkit-scrollbar {
+    display: none;
+}
+body {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Premium slow-moving ambient background animations */
+@keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+@keyframes float-delayed {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-30px, 50px) scale(1.1); }
+    66% { transform: translate(20px, -20px) scale(0.9); }
+}
+
+.animate-ambient-1 {
+    animation: float-slow 15s ease-in-out infinite;
+}
+
+.animate-ambient-2 {
+    animation: float-delayed 18s ease-in-out infinite;
+}
+@import "tailwindcss";
+
+/* Completely hide the main browser scrollbar globally */
+body::-webkit-scrollbar {
+    display: none;
+}
+body {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom Golden Scrollbar for the Modals */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(17, 17, 17, 1); 
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #b38645; 
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #9a733a; 
+}
