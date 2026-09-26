@@ -6,7 +6,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function ScrollVideo() {
   const canvasRef = useRef(null);
-  
   const frameCount = 240; 
 
   useEffect(() => {
@@ -18,26 +17,31 @@ export default function ScrollVideo() {
     const playhead = { frame: 0 };
 
     const updateCanvasSize = () => {
-      // Prevents mobile address bar from causing layout jumps
+      // Prevents mobile address bar from causing layout flashes
       if (window.innerWidth === lastWidth && canvas.width > 0) return;
       lastWidth = window.innerWidth;
 
       const dpr = window.devicePixelRatio || 1;
+      
+      // 1. Set internal drawing resolution
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
+      
+      // 2. STRETCH FIX: Lock CSS dimensions so the browser cannot warp the aspect ratio when the address bar hides
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = 'high';
       
       render(); 
     };
 
-    // RENDER LOCK: Prevents flashing by never clearing unless the next image is 100% ready
     function render() {
       if (!canvas || !context) return;
       
       const img = images[playhead.frame];
       
-      // Ensure image exists, is fully downloaded, and successfully decoded by the browser
       if (img && img.complete && img.naturalWidth > 0) {
         context.clearRect(0, 0, canvas.width, canvas.height);
         
@@ -52,16 +56,13 @@ export default function ScrollVideo() {
       }
     }
 
-    // SEQUENTIAL INITIALIZATION: Load Frame 1 immediately to unblock the UI
     const loadFirstFrame = () => {
       const firstImg = new Image();
       firstImg.src = `/frames_optimized/frame_001.webp`;
       
       firstImg.onload = () => {
         images[0] = firstImg;
-        updateCanvasSize(); // Paint Frame 1 to the screen instantly
-        
-        // Once Frame 1 is visible, silently fetch the rest in the background
+        updateCanvasSize(); 
         loadRemainingFrames();
       };
     };
@@ -124,10 +125,14 @@ export default function ScrollVideo() {
   }, [frameCount]);
 
   return (
-    <div className="fixed inset-0 z-0 w-full h-full bg-black overflow-hidden pointer-events-none">
+    // BLACK SCREEN FIX: Pre-loads the first frame using CSS so the screen is instantly painted
+    <div 
+      className="fixed inset-0 z-0 w-full h-full bg-black overflow-hidden pointer-events-none bg-cover bg-center"
+      style={{ backgroundImage: 'url("/frames_optimized/frame_001.webp")' }}
+    >
       <canvas 
         ref={canvasRef} 
-        className="w-full h-full block origin-center" 
+        className="block origin-center" 
       />
       <div 
         className="absolute inset-0 opacity-[0.04] mix-blend-overlay" 
