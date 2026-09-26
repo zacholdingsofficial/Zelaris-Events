@@ -22,7 +22,6 @@ export default function ScrollVideo() {
 
       const dpr = window.devicePixelRatio || 1;
       
-      // Make the canvas permanently 5% larger than the screen to hide blur edge-bleeding
       const paddedWidth = window.innerWidth * 1.05;
       const paddedHeight = window.innerHeight * 1.05;
       
@@ -38,8 +37,6 @@ export default function ScrollVideo() {
       render(); 
     };
 
-    // FIX 1: Force the canvas to calculate its full-screen size immediately on mount, 
-    // without waiting for any images to load.
     updateCanvasSize();
 
     function render() {
@@ -57,7 +54,16 @@ export default function ScrollVideo() {
         const centerShiftX = (canvas.width - img.width * ratio) / 2;
         const centerShiftY = (canvas.height - img.height * ratio) / 2;
         
-        context.drawImage(img, 0, 0, img.width, img.height, centerShiftX, centerShiftY, img.width * ratio, img.height * ratio);
+        // SMOOTHNESS FIX: Math.floor prevents expensive sub-pixel anti-aliasing calculations
+        context.drawImage(
+          img, 
+          0, 0, 
+          img.width, img.height, 
+          Math.floor(centerShiftX), 
+          Math.floor(centerShiftY), 
+          Math.floor(img.width * ratio), 
+          Math.floor(img.height * ratio)
+        );
       }
     }
 
@@ -65,6 +71,11 @@ export default function ScrollVideo() {
       for (let i = 2; i <= frameCount; i++) {
         const img = new Image();
         img.src = `/frames_optimized/frame_${i.toString().padStart(3, '0')}.webp`;
+        
+        // SMOOTHNESS FIX: Force the browser to decode the image in the background
+        // so it doesn't freeze the main thread when the user scrolls to it
+        img.decode().catch(() => {}); 
+        
         images[i - 1] = img; 
       }
     };
@@ -72,20 +83,17 @@ export default function ScrollVideo() {
     const loadFirstFrame = () => {
       const firstImg = new Image();
       
-      // FIX 2: Define what happens when it loads FIRST
       const handleLoad = () => {
         images[0] = firstImg;
         render(); 
         loadRemainingFrames();
       };
 
-      // Attach the listener before setting the source
       firstImg.onload = handleLoad;
       firstImg.src = `/frames_optimized/frame_001.webp`;
       
-      // FIX 3: If the browser cached it instantly from our CSS background, fire it manually
       if (firstImg.complete && firstImg.naturalWidth > 0) {
-        firstImg.onload = null; // Prevent double firing
+        firstImg.onload = null; 
         handleLoad();
       }
     };
