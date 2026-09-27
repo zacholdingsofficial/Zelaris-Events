@@ -7,7 +7,7 @@ import ScrollVideo from './ScrollVideo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Automatically generate paths for 1.jpg through 13.jpg
+// Updated to target .jpeg extensions
 const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpeg`);
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
@@ -310,12 +310,6 @@ export default function App() {
           <div 
             className="flex overflow-x-auto px-[10vw] py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             style={{ perspective: '1000px' }}
-            onWheel={(e) => {
-              // Allows vertical wheel scrolling to pass straight through the gallery without getting stuck
-              if (e.deltaY !== 0 && e.deltaX === 0) {
-                e.stopPropagation();
-              }
-            }}
           >
             {galleryImages.map((img, idx) => (
               <div 
