@@ -8,7 +8,7 @@ import ScrollVideo from './ScrollVideo';
 gsap.registerPlugin(ScrollTrigger);
 
 // Automatically generate paths for 1.jpg through 13.jpg
-const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpg`);
+const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpeg`);
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" className={className}>
