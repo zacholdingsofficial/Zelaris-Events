@@ -26,6 +26,7 @@ const InstagramIcon = ({ size = 24, className = "" }) => (
 const serviceCategories = [
   { 
     id: 1,
+    image: "/first.png",
     icon: <Crown size={28} />, 
     title: "Planning & Hospitality", 
     shortDesc: "A–Z event planning, VIP hospitality, and flawless coordination.",
@@ -42,6 +43,7 @@ const serviceCategories = [
   },
   { 
     id: 2,
+    image: "/second.png",
     icon: <Sparkles size={28} />, 
     title: "Theme & Décor", 
     shortDesc: "Custom stages, floral designs, and premium venue transformations.",
@@ -54,6 +56,7 @@ const serviceCategories = [
   },
   { 
     id: 3,
+    image: "/third.png",
     icon: <Utensils size={28} />, 
     title: "Premium Catering", 
     shortDesc: "Customized menus, diverse counters, and efficient catering staff.",
@@ -66,6 +69,7 @@ const serviceCategories = [
   },
   { 
     id: 4,
+    image: "/fourth.png",
     icon: <Wand2 size={28} />, 
     title: "Grand Entries & VFX", 
     shortDesc: "Pyrotechnics, LED walls, and spectacular bride & groom entries.",
@@ -78,6 +82,7 @@ const serviceCategories = [
   },
   { 
     id: 5,
+    image: "/fifth.png",
     icon: <Camera size={28} />, 
     title: "Cinematic Media", 
     shortDesc: "Professional photography, drone coverage, and highlight reels.",
@@ -90,6 +95,7 @@ const serviceCategories = [
   },
   {
     id: 6,
+    image: "/sixth.png",
     icon: <CalendarCheck size={28} />,
     title: "Scope & Future",
     shortDesc: "Meeting the increasing demand for professional event organizers.",
@@ -112,9 +118,11 @@ export default function App() {
   const servicesRef = useRef(null);
   const lenisRef = useRef(null);
 
-  // 1. Lenis & GSAP Master Sync Setup
   useEffect(() => {
-    const lenis = new Lenis();
+    const lenis = new Lenis({
+      lerp: 0.05, 
+      smoothWheel: true
+    });
     lenisRef.current = lenis;
 
     lenis.on('scroll', ScrollTrigger.update);
@@ -131,7 +139,6 @@ export default function App() {
     };
   }, []);
 
-  // 2. Handle Scroll Locking
   useEffect(() => {
     if (!isLoaded || activeModal !== null) {
       document.body.style.overflow = 'hidden';
@@ -142,7 +149,6 @@ export default function App() {
     }
   }, [isLoaded, activeModal]);
 
-  // 3. Trigger Content Reveal (Only runs once when fully loaded)
   useEffect(() => {
     if (isLoaded) {
       if (contentRef.current) {
@@ -234,24 +240,33 @@ export default function App() {
 
       {/* Services Section */}
       <section ref={servicesRef} className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">Our Expertise</h2>
           <p className="text-neutral-200 max-w-xl mx-auto text-sm font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">Click on any service to explore our comprehensive offerings.</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {serviceCategories.map((service, index) => (
             <div 
               key={index} 
               onClick={() => setActiveModal(index)}
-              className="service-card cursor-pointer bg-black/30 opacity-0 backdrop-blur-md border border-white/15 p-6 rounded-2xl hover:bg-black/45 hover:border-[#d4af37]/60 transition-all duration-300 group hover:-translate-y-1 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+              className="service-card cursor-pointer bg-white rounded-md overflow-hidden flex flex-col transition-all duration-300 group hover:-translate-y-2 shadow-[0_15px_35px_rgba(0,0,0,0.5)] opacity-0"
             >
-              <div className="text-[#d4af37] mb-4 group-hover:scale-110 transition-transform duration-300 origin-left drop-shadow-md">
-                {service.icon}
+              <div className="h-56 w-full overflow-hidden relative">
+                <img 
+                  src={service.image} 
+                  alt={service.title} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
               </div>
-              <h3 className="text-lg font-semibold mb-2 tracking-wide text-white drop-shadow-md">{service.title}</h3>
-              <p className="text-neutral-200 text-sm leading-relaxed mb-5 font-normal drop-shadow-md">{service.shortDesc}</p>
-              <span className="text-xs text-[#d4af37] font-bold tracking-wider group-hover:underline underline-offset-4 uppercase drop-shadow-sm">Read Details &rarr;</span>
+              <div className="p-6 flex flex-col items-center justify-center text-center bg-white flex-grow">
+                <h3 className="text-black font-serif text-lg font-semibold tracking-widest uppercase mb-5 leading-snug">
+                  {service.title}
+                </h3>
+                <button className="bg-[#111] text-white text-xs font-semibold px-6 py-2.5 border border-[#d4af37] tracking-widest uppercase group-hover:bg-[#d4af37] group-hover:text-black transition-colors duration-300">
+                  View Details
+                </button>
+              </div>
             </div>
           ))}
         </div>
