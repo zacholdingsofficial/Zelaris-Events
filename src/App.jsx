@@ -7,7 +7,7 @@ import ScrollVideo from './ScrollVideo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// IMPORTANT: If your images are .jpeg or .png, change the extension here!
+// Automatically generate paths for 1.jpg through 13.jpg
 const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpeg`);
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
@@ -151,7 +151,6 @@ export default function App() {
 
   useEffect(() => {
     if (isLoaded) {
-      // Hero Entrance
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current.children,
@@ -160,7 +159,6 @@ export default function App() {
         );
       }
 
-      // Services Stagger
       if (servicesRef.current) {
         const cards = gsap.utils.toArray('.service-card');
         if (cards.length > 0) {
@@ -276,27 +274,45 @@ export default function App() {
         </div>
       </section>
 
-      {/* Horizontal Scroll Gallery Section */}
+      {/* 3D Slanted Gallery Section */}
       {galleryImages.length > 0 && (
-        <section className="relative z-10 py-16 border-t border-white/10 mt-10">
-          <div className="text-center mb-10 px-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
-            <p className="text-neutral-300 max-w-xl mx-auto text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Swipe to explore our luxurious setups.</p>
+        <section className="relative z-10 py-10 border-t border-white/10 mt-10">
+          <div className="text-center mb-8 px-6">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
+            <p className="text-neutral-300 max-w-xl mx-auto text-xs md:text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Swipe to explore our luxurious setups.</p>
           </div>
           
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div 
+            className="flex overflow-x-auto px-[10vw] py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            style={{ perspective: '1000px' }}
+          >
             {galleryImages.map((img, idx) => (
               <div 
                 key={idx} 
-                className="group relative w-64 md:w-80 aspect-[4/5] shrink-0 snap-center rounded-2xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-2 hover:border-[#d4af37]/50"
+                // Negative margin collapses them together like a deck of cards
+                className={`group relative w-36 md:w-48 aspect-[3/4] shrink-0 cursor-pointer rounded-xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 ease-out origin-left ${idx !== 0 ? '-ml-16 md:-ml-24' : ''}`}
+                style={{ 
+                  transform: 'rotateY(35deg) scale(0.9)',
+                  // Reverses the z-index so the leftmost card is always on top initially
+                  zIndex: 50 - idx 
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'rotateY(0deg) scale(1.1) translateZ(40px)';
+                  e.currentTarget.style.zIndex = 100; // Pops to the very front on hover
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'rotateY(35deg) scale(0.9)';
+                  e.currentTarget.style.zIndex = 50 - idx; // Returns to correct stacked position
+                }}
               >
                 <img 
                   src={img} 
                   alt={`Event ${idx + 1}`} 
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
+                  className="w-full h-full object-cover" 
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" />
+                {/* Darkens un-hovered cards for better depth perception */}
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
               </div>
             ))}
           </div>
