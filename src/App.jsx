@@ -250,22 +250,26 @@ export default function App() {
             <div 
               key={index} 
               onClick={() => setActiveModal(index)}
-              className="service-card cursor-pointer bg-white rounded-md overflow-hidden flex flex-col transition-all duration-300 group hover:-translate-y-2 shadow-[0_15px_35px_rgba(0,0,0,0.5)] opacity-0"
+              className="service-card cursor-pointer bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden flex flex-col transition-all duration-500 group hover:-translate-y-2 hover:bg-black/50 hover:border-[#d4af37]/40 shadow-[0_8px_32px_rgba(0,0,0,0.4)] opacity-0"
             >
-              <div className="h-56 w-full overflow-hidden relative">
+              <div className="h-56 w-full overflow-hidden relative border-b border-white/10">
                 <img 
                   src={service.image} 
                   alt={service.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
               </div>
-              <div className="p-6 flex flex-col items-center justify-center text-center bg-white flex-grow">
-                <h3 className="text-black font-serif text-lg font-semibold tracking-widest uppercase mb-5 leading-snug">
+              <div className="p-6 flex flex-col flex-grow bg-transparent">
+                <h3 className="text-white text-lg font-semibold tracking-wide mb-2 group-hover:text-[#d4af37] transition-colors duration-300 drop-shadow-md">
                   {service.title}
                 </h3>
-                <button className="bg-[#111] text-white text-xs font-semibold px-6 py-2.5 border border-[#d4af37] tracking-widest uppercase group-hover:bg-[#d4af37] group-hover:text-black transition-colors duration-300">
-                  View Details
-                </button>
+                <p className="text-neutral-300 text-sm leading-relaxed mb-4 font-light drop-shadow-md">
+                  {service.shortDesc}
+                </p>
+                <div className="mt-auto flex justify-end items-center text-[#d4af37] transform group-hover:translate-x-2 transition-transform duration-300 drop-shadow-md">
+                  <span className="text-2xl leading-none">&raquo;</span>
+                </div>
               </div>
             </div>
           ))}
@@ -364,7 +368,6 @@ export default function App() {
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                 onClick={() => setActiveModal(null)}
             />
-            {/* Enlarged modal with robust frosted glass style */}
             <div className="relative bg-black/50 backdrop-blur-2xl border border-white/20 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-[0_16px_48px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in duration-300">
                 
                 <div className="p-6 border-b border-white/15 flex justify-between items-center rounded-t-3xl bg-white/5">
