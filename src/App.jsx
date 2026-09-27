@@ -110,7 +110,7 @@ const serviceCategories = [
 
 export default function App() {
   const [activeModal, setActiveModal] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null); // Lightbox state
+  const [selectedImage, setSelectedImage] = useState(null); 
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   
@@ -120,7 +120,6 @@ export default function App() {
   const galleryRef = useRef(null);
   const lenisRef = useRef(null);
 
-  // Sync scroll locking for both the service modal and the image lightbox
   useEffect(() => {
     if (!isLoaded || activeModal !== null || selectedImage !== null) {
       document.body.style.overflow = 'hidden';
@@ -154,7 +153,6 @@ export default function App() {
 
   useEffect(() => {
     if (isLoaded) {
-      // 1. Hero Entrance
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current.children,
@@ -163,7 +161,6 @@ export default function App() {
         );
       }
 
-      // 2. Services Stagger
       if (servicesRef.current) {
         const cards = gsap.utils.toArray('.service-card');
         if (cards.length > 0) {
@@ -180,7 +177,6 @@ export default function App() {
         }
       }
 
-      // 3. Gallery 3D Entrance Animation
       if (galleryRef.current) {
         const galleryCards = gsap.utils.toArray('.gallery-card');
         if (galleryCards.length > 0) {
@@ -189,7 +185,7 @@ export default function App() {
             {
               x: 0, 
               opacity: 1, 
-              rotateY: 35, // Resolves to the default 3D slant[cite: 14]
+              rotateY: 35, 
               duration: 1.2,
               stagger: 0.05,
               ease: "back.out(1.2)",
@@ -314,13 +310,11 @@ export default function App() {
           <div 
             className="flex overflow-x-auto px-[10vw] py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             style={{ perspective: '1000px' }}
-            data-lenis-prevent="true"
           >
             {galleryImages.map((img, idx) => (
               <div 
                 key={idx} 
                 onClick={() => setSelectedImage(img)}
-                // Added gallery-card class for GSAP, opacity-0 hides it before scroll
                 className={`gallery-card group relative w-36 md:w-48 aspect-[3/4] shrink-0 cursor-pointer rounded-xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 ease-out origin-left opacity-0 ${idx !== 0 ? '-ml-16 md:-ml-24' : ''}`}
                 style={{ 
                   transform: 'rotateY(35deg) scale(0.9)',
