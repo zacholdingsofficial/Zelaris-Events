@@ -7,7 +7,8 @@ import ScrollVideo from './ScrollVideo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const galleryImages = []; 
+// Automatically generate paths for 1.jpg through 12.jpg
+const galleryImages = Array.from({ length: 12 }, (_, i) => `/gallery/${i + 1}.jpg`);
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" className={className}>
@@ -109,7 +110,6 @@ const serviceCategories = [
 
 export default function App() {
   const [activeModal, setActiveModal] = useState(null);
-  
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   
@@ -117,6 +117,8 @@ export default function App() {
   const contentRef = useRef(null);
   const servicesRef = useRef(null);
   const lenisRef = useRef(null);
+  const galleryRef = useRef(null);
+  const galleryTrackRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -151,6 +153,7 @@ export default function App() {
 
   useEffect(() => {
     if (isLoaded) {
+      // Hero Entrance
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current.children,
@@ -159,6 +162,7 @@ export default function App() {
         );
       }
 
+      // Services Stagger
       if (servicesRef.current) {
         const cards = gsap.utils.toArray('.service-card');
         if (cards.length > 0) {
@@ -174,6 +178,27 @@ export default function App() {
             });
         }
       }
+
+      // 3D Horizontal Gallery Scroll Pin
+      if (galleryRef.current && galleryTrackRef.current) {
+        const track = galleryTrackRef.current;
+        const scrollAmount = track.scrollWidth - window.innerWidth + 200; // Extra padding for smoothness
+
+        gsap.to(track, {
+          x: -scrollAmount,
+          ease: "none",
+          scrollTrigger: {
+            trigger: galleryRef.current,
+            start: "top top",
+            end: () => `+=${scrollAmount}`,
+            pin: true,
+            scrub: true,
+            invalidateOnRefresh: true,
+            anticipatePin: 1
+          }
+        });
+      }
+
       ScrollTrigger.refresh();
     }
   }, [isLoaded]);
@@ -193,9 +218,7 @@ export default function App() {
       `}</style>
 
       {/* Loading Screen */}
-      <div 
-        className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-2xl transition-opacity duration-1000 ${isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-      >
+      <div className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-2xl transition-opacity duration-1000 ${isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <img 
           src="/logo.png" 
           alt="Zelaris Events Logo" 
@@ -276,24 +299,54 @@ export default function App() {
         </div>
       </section>
 
+      {/* Cinematic 3D Gallery Section */}
       {galleryImages.length > 0 && (
-        <section className="relative z-10 py-20 px-6 max-w-6xl mx-auto border-t border-white/20 mt-10">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">Past Events</h2>
-            <p className="text-neutral-200 max-w-xl mx-auto text-sm font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">A glimpse into our luxurious setups and unforgettable moments.</p>
+        <section ref={galleryRef} className="relative z-10 h-screen flex flex-col justify-center overflow-hidden border-t border-white/10 mt-10">
+          <div className="absolute top-20 left-0 w-full text-center z-20 pointer-events-none px-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
+            <p className="text-neutral-300 max-w-xl mx-auto text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Scroll to explore our luxurious setups.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {galleryImages.map((img, idx) => (
-                  <div key={idx} className="aspect-square bg-black/30 backdrop-blur-md rounded-xl overflow-hidden border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-                      <img src={img} alt={`Event ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                  </div>
-              ))}
+          
+          <div ref={galleryTrackRef} className="flex gap-8 md:gap-12 items-center px-[10vw] pt-24 w-max h-full">
+            {galleryImages.map((img, idx) => (
+              <div 
+                key={idx} 
+                className="group relative w-[75vw] md:w-[35vw] aspect-[4/5] flex-shrink-0"
+                style={{ perspective: '1200px' }}
+              >
+                {/* Individual 3D Card */}
+                <div 
+                  className="w-full h-full rounded-2xl overflow-hidden border border-white/15 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-700 ease-out origin-left cursor-grab active:cursor-grabbing"
+                  style={{ 
+                    transform: 'rotateY(25deg) scale(0.95)',
+                    transformStyle: 'preserve-3d'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'rotateY(0deg) scale(1.05) translateZ(40px)';
+                    e.currentTarget.style.zIndex = 50;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'rotateY(25deg) scale(0.95)';
+                    e.currentTarget.style.zIndex = 1;
+                  }}
+                >
+                  <img 
+                    src={img} 
+                    alt={`Event ${idx + 1}`} 
+                    className="w-full h-full object-cover" 
+                    loading="lazy"
+                  />
+                  {/* Left-edge shadow to enhance the 3D book cover depth */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent opacity-70 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none" />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
       {/* Footer */}
-      <footer className="relative z-10 bg-black/50 backdrop-blur-2xl border-t border-white/15 pt-16 pb-8 px-6 mt-20">
+      <footer className="relative z-10 bg-black/50 backdrop-blur-2xl border-t border-white/15 pt-16 pb-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10 mb-10">
             
             <div className="max-w-sm">
