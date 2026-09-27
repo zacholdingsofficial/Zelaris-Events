@@ -7,8 +7,8 @@ import ScrollVideo from './ScrollVideo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Automatically generate paths for 1.jpg through 12.jpg
-const galleryImages = Array.from({ length: 12 }, (_, i) => `/gallery/${i + 1}.jpg`);
+// IMPORTANT: If your images are .jpeg or .png, change the extension here!
+const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpeg`);
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" className={className}>
@@ -117,8 +117,6 @@ export default function App() {
   const contentRef = useRef(null);
   const servicesRef = useRef(null);
   const lenisRef = useRef(null);
-  const galleryRef = useRef(null);
-  const galleryTrackRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -178,27 +176,6 @@ export default function App() {
             });
         }
       }
-
-      // 3D Horizontal Gallery Scroll Pin
-      if (galleryRef.current && galleryTrackRef.current) {
-        const track = galleryTrackRef.current;
-        const scrollAmount = track.scrollWidth - window.innerWidth + 200; // Extra padding for smoothness
-
-        gsap.to(track, {
-          x: -scrollAmount,
-          ease: "none",
-          scrollTrigger: {
-            trigger: galleryRef.current,
-            start: "top top",
-            end: () => `+=${scrollAmount}`,
-            pin: true,
-            scrub: true,
-            invalidateOnRefresh: true,
-            anticipatePin: 1
-          }
-        });
-      }
-
       ScrollTrigger.refresh();
     }
   }, [isLoaded]);
@@ -299,46 +276,27 @@ export default function App() {
         </div>
       </section>
 
-      {/* Cinematic 3D Gallery Section */}
+      {/* Horizontal Scroll Gallery Section */}
       {galleryImages.length > 0 && (
-        <section ref={galleryRef} className="relative z-10 h-screen flex flex-col justify-center overflow-hidden border-t border-white/10 mt-10">
-          <div className="absolute top-20 left-0 w-full text-center z-20 pointer-events-none px-6">
+        <section className="relative z-10 py-16 border-t border-white/10 mt-10">
+          <div className="text-center mb-10 px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
-            <p className="text-neutral-300 max-w-xl mx-auto text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Scroll to explore our luxurious setups.</p>
+            <p className="text-neutral-300 max-w-xl mx-auto text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Swipe to explore our luxurious setups.</p>
           </div>
           
-          <div ref={galleryTrackRef} className="flex gap-8 md:gap-12 items-center px-[10vw] pt-24 w-max h-full">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {galleryImages.map((img, idx) => (
               <div 
                 key={idx} 
-                className="group relative w-[75vw] md:w-[35vw] aspect-[4/5] flex-shrink-0"
-                style={{ perspective: '1200px' }}
+                className="group relative w-64 md:w-80 aspect-[4/5] shrink-0 snap-center rounded-2xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-2 hover:border-[#d4af37]/50"
               >
-                {/* Individual 3D Card */}
-                <div 
-                  className="w-full h-full rounded-2xl overflow-hidden border border-white/15 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-700 ease-out origin-left cursor-grab active:cursor-grabbing"
-                  style={{ 
-                    transform: 'rotateY(25deg) scale(0.95)',
-                    transformStyle: 'preserve-3d'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'rotateY(0deg) scale(1.05) translateZ(40px)';
-                    e.currentTarget.style.zIndex = 50;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'rotateY(25deg) scale(0.95)';
-                    e.currentTarget.style.zIndex = 1;
-                  }}
-                >
-                  <img 
-                    src={img} 
-                    alt={`Event ${idx + 1}`} 
-                    className="w-full h-full object-cover" 
-                    loading="lazy"
-                  />
-                  {/* Left-edge shadow to enhance the 3D book cover depth */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent opacity-70 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none" />
-                </div>
+                <img 
+                  src={img} 
+                  alt={`Event ${idx + 1}`} 
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" />
               </div>
             ))}
           </div>
@@ -355,7 +313,7 @@ export default function App() {
                     Events for a brighter tomorrow. Providing budget-friendly and luxury services anywhere in India.
                 </p>
                 <div className="flex gap-4">
-                    <a href="#" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md">
+                    <a href="https://www.instagram.com/zelarisevents/" target="_blank" rel="noopener noreferrer" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md">
                         <InstagramIcon size={20} />
                     </a>
                     <a href="https://wa.me/919037159997" target="_blank" rel="noopener noreferrer" className="text-neutral-300 hover:text-[#d4af37] transition-colors drop-shadow-md">
