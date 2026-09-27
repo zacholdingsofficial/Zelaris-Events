@@ -8,7 +8,7 @@ import ScrollVideo from './ScrollVideo';
 gsap.registerPlugin(ScrollTrigger);
 
 // Automatically generate paths for 1.jpg through 13.jpg
-const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpeg`);
+const galleryImages = Array.from({ length: 13 }, (_, i) => `/gallery/${i + 1}.jpg`);
 
 const WhatsAppIcon = ({ size = 24, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" className={className}>
@@ -110,13 +110,26 @@ const serviceCategories = [
 
 export default function App() {
   const [activeModal, setActiveModal] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null); // Lightbox state
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   
   const heroRef = useRef(null);
   const contentRef = useRef(null);
   const servicesRef = useRef(null);
+  const galleryRef = useRef(null);
   const lenisRef = useRef(null);
+
+  // Sync scroll locking for both the service modal and the image lightbox
+  useEffect(() => {
+    if (!isLoaded || activeModal !== null || selectedImage !== null) {
+      document.body.style.overflow = 'hidden';
+      if (lenisRef.current) lenisRef.current.stop();
+    } else {
+      document.body.style.overflow = 'unset';
+      if (lenisRef.current) lenisRef.current.start();
+    }
+  }, [isLoaded, activeModal, selectedImage]);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -140,17 +153,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!isLoaded || activeModal !== null) {
-      document.body.style.overflow = 'hidden';
-      if (lenisRef.current) lenisRef.current.stop();
-    } else {
-      document.body.style.overflow = 'unset';
-      if (lenisRef.current) lenisRef.current.start();
-    }
-  }, [isLoaded, activeModal]);
-
-  useEffect(() => {
     if (isLoaded) {
+      // 1. Hero Entrance
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current.children,
@@ -159,6 +163,7 @@ export default function App() {
         );
       }
 
+      // 2. Services Stagger
       if (servicesRef.current) {
         const cards = gsap.utils.toArray('.service-card');
         if (cards.length > 0) {
@@ -174,6 +179,30 @@ export default function App() {
             });
         }
       }
+
+      // 3. Gallery 3D Entrance Animation
+      if (galleryRef.current) {
+        const galleryCards = gsap.utils.toArray('.gallery-card');
+        if (galleryCards.length > 0) {
+          gsap.fromTo(galleryCards,
+            { x: 100, opacity: 0, rotateY: 90 },
+            {
+              x: 0, 
+              opacity: 1, 
+              rotateY: 35, // Resolves to the default 3D slant[cite: 14]
+              duration: 1.2,
+              stagger: 0.05,
+              ease: "back.out(1.2)",
+              scrollTrigger: {
+                trigger: galleryRef.current,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+              }
+            }
+          );
+        }
+      }
+
       ScrollTrigger.refresh();
     }
   }, [isLoaded]);
@@ -276,7 +305,7 @@ export default function App() {
 
       {/* 3D Slanted Gallery Section */}
       {galleryImages.length > 0 && (
-        <section className="relative z-10 py-10 border-t border-white/10 mt-10">
+        <section ref={galleryRef} className="relative z-10 py-10 border-t border-white/10 mt-10">
           <div className="text-center mb-8 px-6">
             <h2 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
             <p className="text-neutral-300 max-w-xl mx-auto text-xs md:text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Swipe to explore our luxurious setups.</p>
@@ -285,24 +314,25 @@ export default function App() {
           <div 
             className="flex overflow-x-auto px-[10vw] py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             style={{ perspective: '1000px' }}
+            data-lenis-prevent="true"
           >
             {galleryImages.map((img, idx) => (
               <div 
                 key={idx} 
-                // Negative margin collapses them together like a deck of cards
-                className={`group relative w-36 md:w-48 aspect-[3/4] shrink-0 cursor-pointer rounded-xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 ease-out origin-left ${idx !== 0 ? '-ml-16 md:-ml-24' : ''}`}
+                onClick={() => setSelectedImage(img)}
+                // Added gallery-card class for GSAP, opacity-0 hides it before scroll
+                className={`gallery-card group relative w-36 md:w-48 aspect-[3/4] shrink-0 cursor-pointer rounded-xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 ease-out origin-left opacity-0 ${idx !== 0 ? '-ml-16 md:-ml-24' : ''}`}
                 style={{ 
                   transform: 'rotateY(35deg) scale(0.9)',
-                  // Reverses the z-index so the leftmost card is always on top initially
                   zIndex: 50 - idx 
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'rotateY(0deg) scale(1.1) translateZ(40px)';
-                  e.currentTarget.style.zIndex = 100; // Pops to the very front on hover
+                  e.currentTarget.style.zIndex = 100; 
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'rotateY(35deg) scale(0.9)';
-                  e.currentTarget.style.zIndex = 50 - idx; // Returns to correct stacked position
+                  e.currentTarget.style.zIndex = 50 - idx;
                 }}
               >
                 <img 
@@ -311,7 +341,6 @@ export default function App() {
                   className="w-full h-full object-cover" 
                   loading="lazy"
                 />
-                {/* Darkens un-hovered cards for better depth perception */}
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
               </div>
             ))}
@@ -388,7 +417,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* True Glassmorphism Modal */}
+      {/* Services Details Modal */}
       {activeModal !== null && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div 
@@ -396,7 +425,6 @@ export default function App() {
                 onClick={() => setActiveModal(null)}
             />
             <div className="relative bg-black/50 backdrop-blur-2xl border border-white/20 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-[0_16px_48px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in duration-300">
-                
                 <div className="p-6 border-b border-white/15 flex justify-between items-center rounded-t-3xl bg-white/5">
                     <div className="flex items-center gap-4">
                         <div className="text-[#d4af37] drop-shadow-md">
@@ -411,7 +439,6 @@ export default function App() {
                         <X size={20} />
                     </button>
                 </div>
-
                 <div className="p-8 overflow-y-auto custom-scrollbar" data-lenis-prevent="true">
                     <ul className="space-y-5">
                         {serviceCategories[activeModal].details.map((item, idx) => (
@@ -423,6 +450,29 @@ export default function App() {
                     </ul>
                 </div>
             </div>
+        </div>
+      )}
+
+      {/* Gallery Lightbox Modal */}
+      {selectedImage !== null && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/90 backdrop-blur-xl transition-opacity cursor-pointer"
+            onClick={() => setSelectedImage(null)}
+          />
+          <div className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center animate-in zoom-in duration-300">
+            <button 
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 md:-right-12 text-white/70 hover:text-white p-2 transition-colors z-10"
+            >
+              <X size={32} />
+            </button>
+            <img 
+              src={selectedImage} 
+              alt="Gallery Enlarged" 
+              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10" 
+            />
+          </div>
         </div>
       )}
       
