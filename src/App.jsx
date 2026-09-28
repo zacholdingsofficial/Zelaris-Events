@@ -117,7 +117,6 @@ export default function App() {
   const heroRef = useRef(null);
   const contentRef = useRef(null);
   const servicesRef = useRef(null);
-  const galleryRef = useRef(null);
   const lenisRef = useRef(null);
 
   useEffect(() => {
@@ -176,29 +175,6 @@ export default function App() {
             });
         }
       }
-
-      if (galleryRef.current) {
-        const galleryCards = gsap.utils.toArray('.gallery-card');
-        if (galleryCards.length > 0) {
-          gsap.fromTo(galleryCards,
-            { x: 100, opacity: 0, rotateY: 90 },
-            {
-              x: 0, 
-              opacity: 1, 
-              rotateY: 35, 
-              duration: 1.2,
-              stagger: 0.05,
-              ease: "back.out(1.2)",
-              scrollTrigger: {
-                trigger: galleryRef.current,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
-            }
-          );
-        }
-      }
-
       ScrollTrigger.refresh();
     }
   }, [isLoaded]);
@@ -214,6 +190,20 @@ export default function App() {
         .animate-golden-shine {
           background-size: 200% auto;
           animation: golden-shine 4s linear infinite;
+        }
+
+        /* Auto-Scrolling Marquee CSS */
+        @keyframes scroll-marquee {
+          0% { transform: translateX(0); }
+          /* Shifts perfectly to loop the duplicated array */
+          100% { transform: translateX(calc(-50% - 0.75rem)); } 
+        }
+        .animate-marquee {
+          animation: scroll-marquee 40s linear infinite;
+        }
+        /* Pauses the animation smoothly when hovered */
+        .animate-marquee:hover {
+          animation-play-state: paused;
         }
       `}</style>
 
@@ -299,45 +289,43 @@ export default function App() {
         </div>
       </section>
 
-      {/* 3D Slanted Gallery Section */}
+      {/* Infinite Auto-Scrolling Gallery Section */}
       {galleryImages.length > 0 && (
-        <section ref={galleryRef} className="relative z-10 py-10 border-t border-white/10 mt-10">
-          <div className="text-center mb-8 px-6">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
-            <p className="text-neutral-300 max-w-xl mx-auto text-xs md:text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">Swipe to explore our luxurious setups.</p>
+        <section className="relative z-10 py-16 border-t border-white/10 mt-10 overflow-hidden">
+          <div className="text-center mb-12 px-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,1)] text-white">Past Events</h2>
+            <p className="text-neutral-300 max-w-xl mx-auto text-sm font-light drop-shadow-[0_2px_10px_rgba(0,0,0,1)]">
+              Explore our luxurious setups. Click any image to enlarge.
+            </p>
           </div>
           
+          {/* Mask container: Fades out the extreme left and right sides so it looks perfectly centered and empty on the edges */}
           <div 
-            className="flex overflow-x-auto px-[10vw] py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            style={{ perspective: '1000px' }}
+            className="relative w-full max-w-7xl mx-auto"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+            }}
           >
-            {galleryImages.map((img, idx) => (
-              <div 
-                key={idx} 
-                onClick={() => setSelectedImage(img)}
-                className={`gallery-card group relative w-36 md:w-48 aspect-[3/4] shrink-0 cursor-pointer rounded-xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 ease-out origin-left opacity-0 ${idx !== 0 ? '-ml-16 md:-ml-24' : ''}`}
-                style={{ 
-                  transform: 'rotateY(35deg) scale(0.9)',
-                  zIndex: 50 - idx 
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'rotateY(0deg) scale(1.1) translateZ(40px)';
-                  e.currentTarget.style.zIndex = 100; 
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'rotateY(35deg) scale(0.9)';
-                  e.currentTarget.style.zIndex = 50 - idx;
-                }}
-              >
-                <img 
-                  src={img} 
-                  alt={`Event ${idx + 1}`} 
-                  className="w-full h-full object-cover" 
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
-              </div>
-            ))}
+            {/* The infinite scrolling wrapper */}
+            <div className="flex gap-6 w-max animate-marquee py-4">
+              {/* We render the array twice to create a seamless infinite loop */}
+              {[...galleryImages, ...galleryImages].map((img, idx) => (
+                <div 
+                  key={idx} 
+                  onClick={() => setSelectedImage(img)}
+                  className="group relative w-44 md:w-64 aspect-[4/5] shrink-0 cursor-pointer rounded-2xl overflow-hidden border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-2 hover:border-[#d4af37]/50 hover:shadow-[0_15px_40px_rgba(212,175,55,0.3)]"
+                >
+                  <img 
+                    src={img} 
+                    alt={`Event ${idx + 1}`} 
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
