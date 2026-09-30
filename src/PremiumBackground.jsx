@@ -36,8 +36,9 @@ export default function PremiumBackground() {
     window.addEventListener('scroll', handleScroll);
 
     const render = () => {
-      // Clear canvas entirely every frame instead of painting it dark gray
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Clear canvas with a slight trail effect for smoothness
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.3)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((p) => {
         // Tie particle movement to their base speed PLUS the user's scroll position
@@ -75,6 +76,7 @@ export default function PremiumBackground() {
     <canvas 
       ref={canvasRef} 
       className="fixed inset-0 z-0 pointer-events-none" 
+      style={{ background: 'radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)' }}
     />
   );
 }

@@ -11,7 +11,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
   const progressRef = useRef(0);
   const imagesRef = useRef([]);
-  const frameCount = 240;
+  const frameCount = 240; // Total number of upscaled WebP frames
 
   // 1. IMAGE ARRAY PRELOADING
   useEffect(() => {
@@ -117,6 +117,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
         width={3840}
         height={2160}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[105%] h-[105%] object-cover"
+        style={{ filter: 'contrast(1.1) saturate(1.1) brightness(0.9)' }}
       />
 
       <div
@@ -138,6 +139,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
           backgroundRepeat: 'repeat',
         }}
       />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
     </div>
   );
 }
