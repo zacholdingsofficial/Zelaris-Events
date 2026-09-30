@@ -76,7 +76,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
         // THE key fix: never queue a new seek while the previous one is
         // still being decoded, and skip sub-frame-sized moves.
-        if (!video.seeking && Math.abs(target - lastTarget) > 0.015) {
+        if (!video.seeking && Math.abs(target - lastTarget) > 0.035) {
           video.currentTime = target;
           lastTarget = target;
         }
