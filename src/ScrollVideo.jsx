@@ -9,19 +9,21 @@ export default function ScrollVideo({ onProgress, onComplete }) {
   const overlayRef = useRef(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
+  // Mutable refs read inside the render loop, so the loop never has to be
+  // torn down and rebuilt just because a number changed.
   const progressRef = useRef(0);
   const durationRef = useRef(0);
 
-  // 1. Clean, original blob preloading (no jumping progress)
+  // 1. RAM BLOB PRELOADING
   useEffect(() => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/optimized_scrub.mp4', true);
     xhr.responseType = 'blob';
 
     xhr.onprogress = (event) => {
-      if (event.lengthComputable && onProgress) {
+      if (event.lengthComputable) {
         const percent = Math.floor((event.loaded / event.total) * 100);
-        onProgress(percent);
+        if (onProgress) onProgress(percent);
       }
     };
 
@@ -41,7 +43,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 2. Direct, lightweight scroll scrub
+  // 2. SCROLL-DRIVEN SCRUB
   useEffect(() => {
     if (!videoLoaded) return;
     const video = videoRef.current;
@@ -53,6 +55,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     const startScrub = () => {
       durationRef.current = video.duration || 10;
 
+      // Cheap: only stores a number, never touches the video or the DOM.
       st = ScrollTrigger.create({
         trigger: document.body,
         start: 'top top',
@@ -64,16 +67,23 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
       let lastTarget = -1;
 
+      // One render loop drives both the video seek and the overlay fade,
+      // piggybacking on the same GSAP ticker that already runs Lenis.
       tick = () => {
         if (cancelled) return;
         const progress = progressRef.current;
         const target = progress * durationRef.current;
 
+        // THE key fix: never queue a new seek while the previous one is
+        // still being decoded, and skip sub-frame-sized moves.
         if (!video.seeking && Math.abs(target - lastTarget) > 0.015) {
           video.currentTime = target;
           lastTarget = target;
         }
 
+        // Blur/darken overlay: the blur radius itself never changes, only
+        // opacity does, and it's skipped entirely (display:none) for the
+        // first half of the scroll — no backdrop-filter cost until needed.
         if (overlay) {
           const fadeStart = 0.5;
           const fadeProgress = Math.min(
@@ -115,8 +125,10 @@ export default function ScrollVideo({ onProgress, onComplete }) {
         playsInline
         preload="auto"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[105%] h-[105%] object-cover"
+        style={{ filter: 'contrast(1.1) saturate(1.1) brightness(0.9)' }}
       />
 
+      {/* Static-radius blur overlay, animated by opacity only. */}
       <div
         ref={overlayRef}
         className="absolute inset-0"
@@ -128,6 +140,7 @@ export default function ScrollVideo({ onProgress, onComplete }) {
         }}
       />
 
+      {/* Plain low-opacity overlay instead of mix-blend-overlay */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
         style={{
@@ -136,6 +149,9 @@ export default function ScrollVideo({ onProgress, onComplete }) {
           backgroundRepeat: 'repeat',
         }}
       />
+      
+      {/* VITAL: The darkening gradient that makes your text readable */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
     </div>
   );
 }
