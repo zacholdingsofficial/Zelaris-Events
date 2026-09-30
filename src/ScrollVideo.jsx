@@ -12,6 +12,9 @@ export default function ScrollVideo({ onProgress, onComplete }) {
   const progressRef = useRef(0);
   const imagesRef = useRef([]);
   const frameCount = 240;
+  
+  // Animation frame reference for cleanup
+  const rafRef = useRef(null);
 
   // 1. ASYNCHRONOUS PROGRESSIVE PRELOADING
   useEffect(() => {
@@ -19,7 +22,6 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     let isCompleteTriggered = false;
     const images = [];
 
-    // Assign the empty array to the ref immediately so the scroll logic doesn't break
     imagesRef.current = images;
 
     for (let i = 1; i <= frameCount; i++) {
@@ -35,16 +37,21 @@ export default function ScrollVideo({ onProgress, onComplete }) {
           onProgress(percent);
         }
         
-        // DRAW THE FIRST FRAME IMMEDIATELY
         if (i === 1) {
           const canvas = canvasRef.current;
           if (canvas) {
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { alpha: false }); // Alpha false speeds up rendering
+            
+            // Set canvas size based on device pixel ratio
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            
+            ctx.imageSmoothingEnabled = false; // Massive performance boost
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           }
         }
         
-        // UNBLOCK THE WEBSITE AFTER JUST 10 FRAMES LOAD (Lightning Fast Initial Load)
         if (loadedCount >= 10 && !isCompleteTriggered) {
           isCompleteTriggered = true;
           setImagesLoaded(true);
@@ -56,17 +63,34 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     }
   }, [onProgress, onComplete]);
 
-  // 2. SCROLL-DRIVEN CANVAS SCRUB
+  // 2. SCROLL-DRIVEN CANVAS SCRUB (Optimized)
   useEffect(() => {
     if (!imagesLoaded) return;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    
+    // Get context with alpha set to false for performance
+    const ctx = canvas.getContext('2d', { alpha: false }); 
     const overlay = overlayRef.current;
     
     let cancelled = false;
     let st;
-    let tick;
     let lastRenderedFrame = -1;
+
+    // Handle resizing dynamically
+    const handleResize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.imageSmoothingEnabled = false;
+      
+      // Force a redraw immediately on resize
+      if (lastRenderedFrame >= 0 && imagesRef.current[lastRenderedFrame]) {
+        ctx.drawImage(imagesRef.current[lastRenderedFrame], 0, 0, canvas.width, canvas.height);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial sizing
 
     st = ScrollTrigger.create({
       trigger: document.body,
@@ -77,7 +101,8 @@ export default function ScrollVideo({ onProgress, onComplete }) {
       },
     });
 
-    tick = () => {
+    // Native requestAnimationFrame loop instead of gsap.ticker
+    const renderLoop = () => {
       if (cancelled) return;
       const progress = progressRef.current;
 
@@ -88,7 +113,6 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
       if (targetFrame !== lastRenderedFrame) {
         const img = imagesRef.current[targetFrame];
-        // Only draw if the specific frame has finished downloading in the background
         if (img && img.complete) {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           lastRenderedFrame = targetFrame;
@@ -109,13 +133,17 @@ export default function ScrollVideo({ onProgress, onComplete }) {
           overlay.style.opacity = fadeProgress;
         }
       }
+      
+      rafRef.current = requestAnimationFrame(renderLoop);
     };
 
-    gsap.ticker.add(tick);
+    // Start the render loop
+    rafRef.current = requestAnimationFrame(renderLoop);
 
     return () => {
       cancelled = true;
-      gsap.ticker.remove(tick);
+      window.removeEventListener('resize', handleResize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (st) st.kill();
     };
   }, [imagesLoaded]);
@@ -124,8 +152,6 @@ export default function ScrollVideo({ onProgress, onComplete }) {
     <div className="fixed inset-0 z-0 w-full h-full bg-black overflow-hidden pointer-events-none">
       <canvas
         ref={canvasRef}
-        width={3840}
-        height={2160}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[105%] h-[105%] object-cover"
       />
 
