@@ -12,17 +12,16 @@ export default function ScrollVideo({ onProgress, onComplete }) {
   const progressRef = useRef(0);
   const durationRef = useRef(0);
 
-  // 1. RAM BLOB PRELOADING
+  // 1. Clean, original blob preloading (no jumping progress)
   useEffect(() => {
     const xhr = new XMLHttpRequest();
-    // Switched back to the original optimized video
     xhr.open('GET', '/optimized_scrub.mp4', true);
     xhr.responseType = 'blob';
 
     xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
+      if (event.lengthComputable && onProgress) {
         const percent = Math.floor((event.loaded / event.total) * 100);
-        if (onProgress) onProgress(percent);
+        onProgress(percent);
       }
     };
 
@@ -39,9 +38,10 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
     xhr.send();
     return () => xhr.abort();
-  }, [onProgress, onComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // 2. SCROLL-DRIVEN SCRUB
+  // 2. Direct, lightweight scroll scrub
   useEffect(() => {
     if (!videoLoaded) return;
     const video = videoRef.current;
