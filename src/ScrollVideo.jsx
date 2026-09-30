@@ -5,153 +5,115 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ScrollVideo({ onProgress, onComplete }) {
-  const canvasRef = useRef(null);
+  const videoRef = useRef(null);
   const overlayRef = useRef(null);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const progressRef = useRef(0);
-  const imagesRef = useRef([]);
-  const frameCount = 240;
-  
-  // Animation frame reference for cleanup
-  const rafRef = useRef(null);
+  const durationRef = useRef(0);
 
-  // 1. ASYNCHRONOUS PROGRESSIVE PRELOADING
+  // 1. RAM BLOB PRELOADING
   useEffect(() => {
-    let loadedCount = 0;
-    let isCompleteTriggered = false;
-    const images = [];
+    const xhr = new XMLHttpRequest();
+    // Switched back to the original optimized video
+    xhr.open('GET', '/optimized_scrub.mp4', true);
+    xhr.responseType = 'blob';
 
-    imagesRef.current = images;
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.floor((event.loaded / event.total) * 100);
+        if (onProgress) onProgress(percent);
+      }
+    };
 
-    for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
-      const frameStr = i.toString().padStart(3, '0');
-      img.src = `/frames/frame_${frameStr}.webp`;
-
-      img.onload = () => {
-        loadedCount++;
-        
-        if (onProgress) {
-          const percent = Math.floor((loadedCount / frameCount) * 100);
-          onProgress(percent);
-        }
-        
-        if (i === 1) {
-          const canvas = canvasRef.current;
-          if (canvas) {
-            const ctx = canvas.getContext('2d', { alpha: false }); // Alpha false speeds up rendering
-            
-            // Set canvas size based on device pixel ratio
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            
-            ctx.imageSmoothingEnabled = false; // Massive performance boost
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          }
-        }
-        
-        if (loadedCount >= 10 && !isCompleteTriggered) {
-          isCompleteTriggered = true;
-          setImagesLoaded(true);
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const videoUrl = URL.createObjectURL(xhr.response);
+        if (videoRef.current) {
+          videoRef.current.src = videoUrl;
+          setVideoLoaded(true);
           if (onComplete) onComplete();
         }
-      };
-      
-      images.push(img);
-    }
+      }
+    };
+
+    xhr.send();
+    return () => xhr.abort();
   }, [onProgress, onComplete]);
 
-  // 2. SCROLL-DRIVEN CANVAS SCRUB (Optimized)
+  // 2. SCROLL-DRIVEN SCRUB
   useEffect(() => {
-    if (!imagesLoaded) return;
-    const canvas = canvasRef.current;
-    
-    // Get context with alpha set to false for performance
-    const ctx = canvas.getContext('2d', { alpha: false }); 
+    if (!videoLoaded) return;
+    const video = videoRef.current;
     const overlay = overlayRef.current;
-    
     let cancelled = false;
     let st;
-    let lastRenderedFrame = -1;
+    let tick;
 
-    // Handle resizing dynamically
-    const handleResize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      ctx.imageSmoothingEnabled = false;
-      
-      // Force a redraw immediately on resize
-      if (lastRenderedFrame >= 0 && imagesRef.current[lastRenderedFrame]) {
-        ctx.drawImage(imagesRef.current[lastRenderedFrame], 0, 0, canvas.width, canvas.height);
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial sizing
+    const startScrub = () => {
+      durationRef.current = video.duration || 10;
 
-    st = ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => {
-        progressRef.current = self.progress;
-      },
-    });
+      st = ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+          progressRef.current = self.progress;
+        },
+      });
 
-    // Native requestAnimationFrame loop instead of gsap.ticker
-    const renderLoop = () => {
-      if (cancelled) return;
-      const progress = progressRef.current;
+      let lastTarget = -1;
 
-      const targetFrame = Math.min(
-        frameCount - 1,
-        Math.floor(progress * frameCount)
-      );
+      tick = () => {
+        if (cancelled) return;
+        const progress = progressRef.current;
+        const target = progress * durationRef.current;
 
-      if (targetFrame !== lastRenderedFrame) {
-        const img = imagesRef.current[targetFrame];
-        if (img && img.complete) {
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          lastRenderedFrame = targetFrame;
+        if (!video.seeking && Math.abs(target - lastTarget) > 0.015) {
+          video.currentTime = target;
+          lastTarget = target;
         }
-      }
 
-      if (overlay) {
-        const fadeStart = 0.5;
-        const fadeProgress = Math.min(
-          1,
-          Math.max(0, (progress - fadeStart) / (1 - fadeStart))
-        );
+        if (overlay) {
+          const fadeStart = 0.5;
+          const fadeProgress = Math.min(
+            1,
+            Math.max(0, (progress - fadeStart) / (1 - fadeStart))
+          );
 
-        if (fadeProgress <= 0) {
-          if (overlay.style.display !== 'none') overlay.style.display = 'none';
-        } else {
-          if (overlay.style.display === 'none') overlay.style.display = 'block';
-          overlay.style.opacity = fadeProgress;
+          if (fadeProgress <= 0) {
+            if (overlay.style.display !== 'none') overlay.style.display = 'none';
+          } else {
+            if (overlay.style.display === 'none') overlay.style.display = 'block';
+            overlay.style.opacity = fadeProgress;
+          }
         }
-      }
-      
-      rafRef.current = requestAnimationFrame(renderLoop);
+      };
+
+      gsap.ticker.add(tick);
     };
 
-    // Start the render loop
-    rafRef.current = requestAnimationFrame(renderLoop);
+    if (video.readyState >= 1) {
+      startScrub();
+    } else {
+      video.onloadedmetadata = startScrub;
+    }
 
     return () => {
       cancelled = true;
-      window.removeEventListener('resize', handleResize);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (tick) gsap.ticker.remove(tick);
       if (st) st.kill();
+      video.onloadedmetadata = null;
     };
-  }, [imagesLoaded]);
+  }, [videoLoaded]);
 
   return (
     <div className="fixed inset-0 z-0 w-full h-full bg-black overflow-hidden pointer-events-none">
-      <canvas
-        ref={canvasRef}
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="auto"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[105%] h-[105%] object-cover"
       />
 
