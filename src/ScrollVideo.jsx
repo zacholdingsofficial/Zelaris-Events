@@ -11,12 +11,16 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
   const progressRef = useRef(0);
   const imagesRef = useRef([]);
-  const frameCount = 240; // Total number of upscaled WebP frames
+  const frameCount = 240;
 
-  // 1. IMAGE ARRAY PRELOADING
+  // 1. ASYNCHRONOUS PROGRESSIVE PRELOADING
   useEffect(() => {
     let loadedCount = 0;
+    let isCompleteTriggered = false;
     const images = [];
+
+    // Assign the empty array to the ref immediately so the scroll logic doesn't break
+    imagesRef.current = images;
 
     for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
@@ -25,21 +29,26 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
       img.onload = () => {
         loadedCount++;
+        
         if (onProgress) {
           const percent = Math.floor((loadedCount / frameCount) * 100);
           onProgress(percent);
         }
         
-        if (loadedCount === frameCount) {
-          imagesRef.current = images;
+        // DRAW THE FIRST FRAME IMMEDIATELY
+        if (i === 1) {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          }
+        }
+        
+        // UNBLOCK THE WEBSITE AFTER JUST 10 FRAMES LOAD (Lightning Fast Initial Load)
+        if (loadedCount >= 10 && !isCompleteTriggered) {
+          isCompleteTriggered = true;
           setImagesLoaded(true);
           if (onComplete) onComplete();
-          
-          const canvas = canvasRef.current;
-          if (canvas && images[0]) {
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(images[0], 0, 0, canvas.width, canvas.height);
-          }
         }
       };
       
@@ -79,10 +88,11 @@ export default function ScrollVideo({ onProgress, onComplete }) {
 
       if (targetFrame !== lastRenderedFrame) {
         const img = imagesRef.current[targetFrame];
+        // Only draw if the specific frame has finished downloading in the background
         if (img && img.complete) {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          lastRenderedFrame = targetFrame;
         }
-        lastRenderedFrame = targetFrame;
       }
 
       if (overlay) {
@@ -117,7 +127,6 @@ export default function ScrollVideo({ onProgress, onComplete }) {
         width={3840}
         height={2160}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[105%] h-[105%] object-cover"
-        style={{ filter: 'contrast(1.1) saturate(1.1) brightness(0.9)' }}
       />
 
       <div
@@ -139,7 +148,6 @@ export default function ScrollVideo({ onProgress, onComplete }) {
           backgroundRepeat: 'repeat',
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
     </div>
   );
 }
