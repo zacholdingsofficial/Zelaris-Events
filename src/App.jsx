@@ -145,6 +145,7 @@ export default function App() {
 
   const root = useRef(null);
   const lenisRef = useRef(null);
+  const touchX = useRef(0);
 
   const go = (id) => lenisRef.current?.scrollTo(id, { offset: -80, duration: 1.4 });
 
@@ -179,7 +180,7 @@ export default function App() {
     if (lock) lenisRef.current?.stop(); else lenisRef.current?.start();
   }, [isLoaded, light]);
 
-  // auto-advance small gallery slideshow
+  // auto-advance gallery slideshow
   useEffect(() => {
     if (!isLoaded || light !== null) return;
     const id = setInterval(() => setSlide((s) => (s + 1) % galleryImages.length), 4000);
@@ -198,7 +199,7 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [light]);
 
-  // page animations
+  // page animations (enabled on both mobile and desktop)
   useEffect(() => {
     if (!isLoaded) return;
     const ctx = gsap.context(() => {
@@ -217,10 +218,35 @@ export default function App() {
         });
       }
 
+      // What we do: sticky stack depth + image zoom animation on both mobile & desktop
       const cards = gsap.utils.toArray('.stack-card');
-      if (desktop && !reduce) {
-        cards.slice(0, -1).forEach((c, i) => {
-          gsap.to(c, { scale: 0.94, opacity: 0.55, ease: 'none', scrollTrigger: { trigger: cards[i + 1], start: 'top 85%', end: 'top 15%', scrub: true } });
+      if (!reduce) {
+        cards.forEach((c, i) => {
+          const img = c.querySelector('.service-img');
+          if (img) {
+            gsap.fromTo(
+              img,
+              { scale: 1.14 },
+              {
+                scale: 1,
+                ease: 'none',
+                scrollTrigger: { trigger: c, start: 'top 95%', end: 'top 25%', scrub: true },
+              }
+            );
+          }
+          if (i < cards.length - 1) {
+            gsap.to(c, {
+              scale: desktop ? 0.94 : 0.93,
+              opacity: desktop ? 0.55 : 0.45,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: cards[i + 1],
+                start: desktop ? 'top 85%' : 'top 88%',
+                end: desktop ? 'top 15%' : 'top 20%',
+                scrub: true,
+              },
+            });
+          }
         });
       }
 
@@ -246,7 +272,7 @@ export default function App() {
     window.open(wa(`${parts.join(' ')}. Can we talk?`), '_blank', 'noopener');
   };
 
-  const field = 'w-full rounded-xl border border-[#2a1500]/15 bg-white px-4 py-3 text-[15px] text-[#2a1500] outline-none transition focus:border-[#d12f6a] focus:ring-4 focus:ring-[#d12f6a]/15';
+  const field = 'w-full min-w-0 appearance-none rounded-xl border border-[#2a1500]/15 bg-white px-4 py-3 text-[15px] text-[#2a1500] outline-none transition focus:border-[#d12f6a] focus:ring-4 focus:ring-[#d12f6a]/15';
 
   return (
     <div ref={root} className="relative bg-[#fff6ea] text-[#2a1500] selection:bg-[#ffb627] selection:text-[#2a1500]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip' }}>
@@ -267,6 +293,8 @@ export default function App() {
         .marquee { animation: marquee 40s linear infinite }
         .marquee-rev { animation: marquee-rev 52s linear infinite }
         .ping2 { animation: ping2 2.2s cubic-bezier(0,0,.2,1) infinite }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         @media (prefers-reduced-motion: reduce) { .drift,.marquee,.marquee-rev,.ping2,.col-up,.col-down { animation: none } }
       `}</style>
 
@@ -283,8 +311,8 @@ export default function App() {
 
       {/* nav */}
       <header className="fixed left-0 top-3 z-[80] flex w-full justify-center px-3 md:top-4">
-        <nav className="flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border border-white/20 bg-[#14061f]/85 py-2.5 pl-5 pr-2.5 text-white shadow-2xl backdrop-blur-xl md:pl-7">
-          <button onClick={() => go('#top')} aria-label="Back to top" className="shrink-0"><img src="/logo.png" alt="Zelaris Events" className="h-10 md:h-12" /></button>
+        <nav className="flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border border-white/20 bg-[#14061f]/85 py-2 pl-4 pr-2 text-white shadow-2xl backdrop-blur-xl md:py-2.5 md:pl-7 md:pr-2.5">
+          <button onClick={() => go('#top')} aria-label="Back to top" className="shrink-0"><img src="/logo.png" alt="Zelaris Events" className="h-9 md:h-12" /></button>
           <div className="hidden items-center gap-8 text-[17px] font-semibold lg:flex">
             {navItems.map(([id, label]) => (
               <button key={id} onClick={() => go(`#${id}`)} className={`relative py-1 transition ${active === id ? 'text-[#ffb627]' : 'text-white/75 hover:text-white'}`}>
@@ -293,17 +321,17 @@ export default function App() {
               </button>
             ))}
           </div>
-          <span className="truncate text-base font-semibold text-[#ffb627] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
-          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-[#ffb627] px-5 py-3 text-base font-semibold text-[#2a1500] transition hover:scale-105">
+          <span className="truncate text-sm font-semibold text-[#ffb627] sm:text-base lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
+          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-[#ffb627] px-4 py-2.5 text-sm font-semibold text-[#2a1500] transition hover:scale-105 md:px-5 md:py-3 md:text-base">
             <WhatsAppIcon size={18} /> <span className="hidden sm:inline">Chat with us</span><span className="sm:hidden">Chat</span>
           </a>
         </nav>
       </header>
 
       {/* floating whatsapp */}
-      <a href={wa('Hi Zelaris Events!')} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-[80] grid h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-xl transition hover:scale-110">
+      <a href={wa('Hi Zelaris Events!')} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-4 right-4 z-[80] grid h-13 w-13 place-items-center rounded-full bg-[#25d366] text-white shadow-xl transition hover:scale-110 md:bottom-5 md:right-5 md:h-14 md:w-14">
         <span className="ping2 absolute inset-0 rounded-full bg-[#25d366]/60" />
-        <WhatsAppIcon size={28} className="relative" />
+        <WhatsAppIcon size={26} className="relative md:scale-105" />
       </a>
 
       {/* hero */}
@@ -312,36 +340,36 @@ export default function App() {
         <div className="drift absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-[#ffb627]/25 blur-[120px]" style={{ animationDelay: '-5s' }} />
         <div className="drift absolute left-1/3 top-1/2 h-80 w-80 rounded-full bg-[#4a1d7c]/60 blur-[100px]" style={{ animationDelay: '-9s' }} />
 
-        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-8 px-5 pb-4 pt-28 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8 md:pt-32">
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-6 px-5 pb-2 pt-24 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8 md:pb-4 md:pt-32">
           <div className="hero-copy text-center md:text-left">
-            <h1 className="font-display tracking-tight text-[2.5rem] font-bold leading-[1.04] sm:text-6xl xl:text-[4.8rem]">
+            <h1 className="font-display tracking-tight text-[2.35rem] font-bold leading-[1.05] sm:text-6xl xl:text-[4.8rem]">
               {'Your celebration, planned down to the last detail.'.split(' ').map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden pb-1 align-bottom">
                   <span className="hero-word inline-block">{w}&nbsp;</span>
                 </span>
               ))}
             </h1>
-            <p className="hero-fade mx-auto mt-6 max-w-xl text-base text-white/75 md:mx-0 md:text-lg">
+            <p className="hero-fade mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-white/75 md:mx-0 md:mt-6 md:text-lg">
               Weddings, receptions and corporate events anywhere in India. Décor, catering, grand entries and cinematic coverage, all handled by one friendly team.
             </p>
-            <div className="hero-fade mt-8 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
-              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#ffb627] px-8 py-4 text-lg font-semibold text-[#2a1500] shadow-[0_0_40px_rgba(255,182,39,0.35)] transition hover:scale-105">
+            <div className="hero-fade mt-6 flex flex-col items-center gap-3 sm:flex-row md:mt-8 md:justify-start">
+              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-full bg-[#ffb627] px-8 py-3.5 text-base font-semibold text-[#2a1500] shadow-[0_0_40px_rgba(255,182,39,0.35)] transition hover:scale-105 sm:w-auto md:py-4 md:text-lg">
                 Book your event <ArrowUpRight size={20} />
               </a>
-              <button onClick={() => go('#services')} className="rounded-full border border-white/25 px-8 py-4 text-lg font-medium text-white transition hover:bg-white/10">
+              <button onClick={() => go('#services')} className="w-full max-w-xs rounded-full border border-white/25 px-8 py-3.5 text-base font-medium text-white transition hover:bg-white/10 sm:w-auto md:py-4 md:text-lg">
                 See what we do
               </button>
             </div>
           </div>
 
-          <div className="hero-cols grid h-[34vh] grid-cols-2 gap-3 md:h-[66vh] md:gap-4" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
+          <div className="hero-cols grid h-[32vh] grid-cols-2 gap-3 md:h-[66vh] md:gap-4" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
             {[0, 1].map((col) => {
               const order = col ? [3, 4, 5, 0, 1, 2] : [0, 1, 2, 3, 4, 5];
               return (
                 <div key={col} className="overflow-hidden">
                   <div className={col ? 'col-down' : 'col-up'}>
                     {[...order, ...order].map((n, i) => (
-                      <img key={i} src={services[n].image} alt={i < 6 ? services[n].title : ''} aria-hidden={i >= 6} className="mb-3 aspect-[3/4] w-full rounded-3xl object-cover shadow-xl md:mb-4" />
+                      <img key={i} src={services[n].image} alt={i < 6 ? services[n].title : ''} aria-hidden={i >= 6} className="mb-3 aspect-[3/4] w-full rounded-2xl object-cover shadow-xl md:mb-4 md:rounded-3xl" />
                     ))}
                   </div>
                 </div>
@@ -350,48 +378,55 @@ export default function App() {
           </div>
         </div>
 
-        <div className="hero-fade relative z-10 mb-6 h-28 w-full md:mb-10 md:h-32">
-          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 rotate-[2deg] scale-110 overflow-hidden bg-[#d12f6a] py-2.5 text-white/90">
-            <div className="marquee-rev flex w-max gap-8 whitespace-nowrap font-display tracking-tight text-lg font-bold md:text-xl">
+        {/* crossed ribbons — separated & steeper on mobile so rose band is clearly visible; untouched on md: */}
+        <div className="hero-fade relative z-10 mb-5 mt-2 h-28 w-full md:mb-10 md:mt-0 md:h-32">
+          <div className="absolute inset-x-0 top-[30%] -translate-y-1/2 rotate-[6deg] scale-110 overflow-hidden bg-[#d12f6a] py-2.5 text-white/95 shadow-lg md:top-1/2 md:rotate-[2deg] md:shadow-none">
+            <div className="marquee-rev flex w-max gap-6 whitespace-nowrap font-display tracking-tight text-base font-bold md:gap-8 md:text-xl">
               {[...marquee, ...marquee, ...marquee, ...marquee].reverse().map((m, i) => (
-                <span key={i} className="flex items-center gap-8">{m}<Sparkles size={18} /></span>
+                <span key={i} className="flex items-center gap-6 md:gap-8">{m}<Sparkles size={16} /></span>
               ))}
             </div>
           </div>
-          <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 -rotate-2 scale-110 overflow-hidden bg-[#ffb627] py-4 text-[#2a1500] shadow-xl">
-            <div className="marquee flex w-max gap-10 whitespace-nowrap font-display tracking-tight text-2xl font-bold md:text-3xl">
+          <div className="absolute inset-x-0 top-[68%] z-10 -translate-y-1/2 -rotate-[5deg] scale-110 overflow-hidden bg-[#ffb627] py-3 text-[#2a1500] shadow-xl md:top-1/2 md:-rotate-2 md:py-4">
+            <div className="marquee flex w-max gap-8 whitespace-nowrap font-display tracking-tight text-xl font-bold md:gap-10 md:text-3xl">
               {[...marquee, ...marquee, ...marquee, ...marquee].map((m, i) => (
-                <span key={i} className="flex items-center gap-10">{m}<Sparkles size={22} /></span>
+                <span key={i} className="flex items-center gap-8 md:gap-10">{m}<Sparkles size={20} /></span>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* services */}
-      <section id="services" className="mx-auto max-w-[1600px] px-3 pb-24 pt-24 md:px-6 md:pt-32">
-        <div className="reveal mb-12 max-w-2xl md:mb-16">
-          <h2 className="font-display tracking-tight text-4xl font-bold leading-tight md:text-6xl">Everything your day needs, under one roof.</h2>
-          <p className="mt-4 text-lg text-[#2a1500]/70">From the first idea to the last dance. Scroll through what we take care of.</p>
+      {/* services — sticky stacking & scroll animation active on both mobile and desktop */}
+      <section id="services" className="mx-auto max-w-[1600px] px-3.5 pb-20 pt-20 md:px-6 md:pb-24 md:pt-32">
+        <div className="reveal mb-10 max-w-2xl px-1 md:mb-16 md:px-0">
+          <h2 className="font-display tracking-tight text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">Everything your day needs, under one roof.</h2>
+          <p className="mt-3 text-base text-[#2a1500]/70 md:mt-4 md:text-lg">From the first idea to the last dance. Scroll through what we take care of.</p>
         </div>
 
         {services.map((s, i) => (
-          <article key={s.title} className="stack-card mb-6 md:sticky md:mb-[14vh]" style={{ top: `calc(6.25rem + ${i * 0.7}rem)` }}>
-            <div className={`grid overflow-hidden rounded-[2rem] shadow-[0_25px_60px_-20px_rgba(42,21,0,0.45)] md:min-h-[calc(100dvh-9.5rem)] md:grid-cols-2 ${s.tone}`}>
-              <div className="flex flex-col justify-center gap-5 p-7 md:p-14">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-black/10">{s.icon}</span>
-                <h3 className="font-display tracking-tight text-3xl font-bold md:text-6xl">{s.title}</h3>
-                <p className="text-base opacity-80 md:text-xl">{s.short}</p>
-                <ul className="mt-1 space-y-2.5">
+          <article
+            key={s.title}
+            className="stack-card sticky mb-[8vh] md:mb-[14vh]"
+            style={{ top: `calc(4.75rem + ${i * 0.55}rem)` }}
+          >
+            <div className={`grid overflow-hidden rounded-[1.75rem] shadow-[0_22px_55px_-18px_rgba(42,21,0,0.48)] md:min-h-[calc(100dvh-9.5rem)] md:grid-cols-2 md:rounded-[2rem] ${s.tone}`}>
+              <div className="flex flex-col justify-center gap-3 p-5 sm:p-7 md:gap-5 md:p-14">
+                <div className="flex items-center gap-3 md:block">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-black/10 md:h-12 md:w-12 md:rounded-2xl">{s.icon}</span>
+                  <h3 className="font-display tracking-tight text-2xl font-bold sm:text-3xl md:mt-5 md:text-6xl">{s.title}</h3>
+                </div>
+                <p className="text-sm opacity-85 sm:text-base md:text-xl">{s.short}</p>
+                <ul className="mt-0.5 space-y-1.5 md:mt-1 md:space-y-2.5">
                   {s.details.map((d) => (
-                    <li key={d} className="flex items-start gap-3 text-[15px] leading-snug md:text-[17px]">
-                      <CheckCircle2 size={18} className="mt-0.5 shrink-0" /> <span>{d}</span>
+                    <li key={d} className="flex items-start gap-2.5 text-[13.5px] leading-snug sm:text-[15px] md:gap-3 md:text-[17px]">
+                      <CheckCircle2 size={16} className="mt-0.5 shrink-0 md:h-[18px] md:w-[18px]" /> <span>{d}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="relative min-h-[260px] md:min-h-full">
-                <img src={s.image} alt={s.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="order-first relative h-44 overflow-hidden sm:h-56 md:order-none md:h-auto md:min-h-full">
+                <img src={s.image} alt={s.title} loading="lazy" className="service-img absolute inset-0 h-full w-full object-cover" />
               </div>
             </div>
           </article>
@@ -399,17 +434,17 @@ export default function App() {
       </section>
 
       {/* how it works — Option 1: fixed-dimension color pillars */}
-      <section id="how" className="mx-auto max-w-[1600px] px-4 pb-28 pt-8 md:px-6 md:pb-36">
-        <div className="reveal mb-10 flex flex-col justify-between gap-4 md:mb-14 md:flex-row md:items-end">
-          <h2 className="font-display tracking-tight text-4xl font-bold leading-tight md:text-6xl">
+      <section id="how" className="mx-auto max-w-[1600px] px-4 pb-24 pt-6 md:px-6 md:pb-36 md:pt-8">
+        <div className="reveal mb-8 flex flex-col justify-between gap-3 md:mb-14 md:flex-row md:items-end">
+          <h2 className="font-display tracking-tight text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">
             From “hello” to the last dance.
           </h2>
-          <p className="max-w-md text-base text-[#2a1500]/70 md:text-lg">
+          <p className="max-w-md text-sm text-[#2a1500]/70 sm:text-base md:text-lg">
             Tap or hover through how we bring your celebration together.
           </p>
         </div>
 
-        <div className="reveal flex h-[540px] flex-col gap-3 md:h-[430px] md:flex-row md:gap-4">
+        <div className="reveal flex h-[520px] flex-col gap-2.5 md:h-[430px] md:flex-row md:gap-4">
           {steps.map(([title, desc, tags, tone, pillTone], i) => {
             const open = step === i;
             return (
@@ -420,25 +455,25 @@ export default function App() {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setStep(i))}
-                className={`relative cursor-pointer overflow-hidden rounded-[2rem] shadow-[0_20px_50px_-20px_rgba(42,21,0,0.3)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${tone} ${
-                  open ? 'flex-[3.4] md:flex-[3.6]' : 'flex-[0.65] md:flex-[0.75]'
+                className={`relative cursor-pointer overflow-hidden rounded-[1.6rem] shadow-[0_20px_50px_-20px_rgba(42,21,0,0.3)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:rounded-[2rem] ${tone} ${
+                  open ? 'flex-[3.5] md:flex-[3.6]' : 'flex-[0.65] md:flex-[0.75]'
                 }`}
               >
                 <div
-                  className={`absolute inset-0 flex items-center justify-between px-6 transition-opacity duration-200 md:justify-center md:px-0 ${
+                  className={`absolute inset-0 flex items-center justify-between px-5 transition-opacity duration-200 md:justify-center md:px-0 ${
                     open ? 'pointer-events-none opacity-0' : 'opacity-100 delay-100'
                   }`}
                 >
-                  <span className="font-display tracking-tight whitespace-nowrap text-xl font-bold md:text-2xl md:[writing-mode:vertical-rl] md:rotate-180">
+                  <span className="font-display tracking-tight whitespace-nowrap text-lg font-bold sm:text-xl md:text-2xl md:[writing-mode:vertical-rl] md:rotate-180">
                     {title}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-widest opacity-50 md:hidden">
-                    Open
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider md:hidden ${pillTone}`}>
+                    View
                   </span>
                 </div>
 
                 <div
-                  className={`absolute inset-0 flex flex-col justify-between p-6 transition-opacity duration-300 sm:p-8 md:p-12 ${
+                  className={`absolute inset-0 flex flex-col justify-between p-5 transition-opacity duration-300 sm:p-8 md:p-12 ${
                     open ? 'opacity-100 delay-150' : 'pointer-events-none opacity-0'
                   }`}
                 >
@@ -446,16 +481,16 @@ export default function App() {
                     <h3 className="font-display tracking-tight text-2xl font-bold sm:text-3xl md:text-5xl">
                       {title}
                     </h3>
-                    <p className="mt-3 text-sm leading-relaxed opacity-85 sm:text-base md:mt-5 md:text-lg">
+                    <p className="mt-2.5 text-sm leading-relaxed opacity-85 sm:text-base md:mt-5 md:text-lg">
                       {desc}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {tags.map((t) => (
                       <span
                         key={t}
-                        className={`rounded-full px-3.5 py-1.5 text-xs font-semibold sm:text-sm ${pillTone}`}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold sm:px-3.5 sm:text-sm ${pillTone}`}
                       >
                         {t}
                       </span>
@@ -468,24 +503,24 @@ export default function App() {
         </div>
       </section>
 
-      {/* gallery */}
-      <section id="gallery" className="bg-[#14061f] px-4 py-24 text-white md:px-8 md:py-32">
+      {/* gallery — touch-swipe stage on mobile + ribbon thumbnails on mobile / 13-col grid on desktop */}
+      <section id="gallery" className="bg-[#14061f] px-4 py-20 text-white md:px-8 md:py-32">
         <div className="mx-auto max-w-6xl">
-          <div className="reveal mb-10 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
+          <div className="reveal mb-8 flex items-end justify-between gap-4 md:mb-12">
             <div>
-              <h2 className="font-display tracking-tight text-4xl font-bold leading-tight md:text-6xl">
+              <h2 className="font-display tracking-tight text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">
                 Events we’ve brought to life.
               </h2>
-              <p className="mt-3 text-white/65 md:text-lg">
-                Pick any photo below or tap the stage to view it full screen.
+              <p className="mt-2 text-sm text-white/65 sm:text-base md:mt-3 md:text-lg">
+                Swipe or pick any photo below, or tap the stage to view it full screen.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex shrink-0 gap-2">
               <button
                 type="button"
                 onClick={() => setSlide((s) => (s - 1 + galleryImages.length) % galleryImages.length)}
                 aria-label="Previous photo"
-                className="grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-[#ffb627] hover:text-[#2a1500]"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-[#ffb627] hover:text-[#2a1500] md:h-11 md:w-11"
               >
                 <ChevronLeft size={20} />
               </button>
@@ -493,7 +528,7 @@ export default function App() {
                 type="button"
                 onClick={() => setSlide((s) => (s + 1) % galleryImages.length)}
                 aria-label="Next photo"
-                className="grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-[#ffb627] hover:text-[#2a1500]"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-[#ffb627] hover:text-[#2a1500] md:h-11 md:w-11"
               >
                 <ChevronRight size={20} />
               </button>
@@ -502,10 +537,17 @@ export default function App() {
 
           <div
             onClick={() => setLight(slide)}
+            onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              const delta = e.changedTouches[0].clientX - touchX.current;
+              if (Math.abs(delta) > 40) {
+                setSlide((s) => (delta < 0 ? (s + 1) % galleryImages.length : (s - 1 + galleryImages.length) % galleryImages.length));
+              }
+            }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setLight(slide)}
-            className="reveal group relative mb-5 h-[300px] w-full cursor-pointer overflow-hidden rounded-[2rem] border border-white/15 bg-black/40 shadow-2xl sm:h-[400px] md:h-[480px]"
+            className="reveal group relative mb-4 h-[320px] w-full cursor-pointer overflow-hidden rounded-[1.75rem] border border-white/15 bg-black/40 shadow-2xl sm:h-[400px] md:mb-5 md:h-[480px] md:rounded-[2rem]"
           >
             {galleryImages.map((src, i) => (
               <img
@@ -518,12 +560,13 @@ export default function App() {
                 }`}
               />
             ))}
-            <span className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-[#14061f]/75 text-white backdrop-blur-md transition group-hover:bg-[#ffb627] group-hover:text-[#2a1500]">
+            <span className="absolute bottom-3.5 right-3.5 grid h-10 w-10 place-items-center rounded-full bg-[#14061f]/75 text-white backdrop-blur-md transition group-hover:bg-[#ffb627] group-hover:text-[#2a1500] md:bottom-4 md:right-4 md:h-11 md:w-11">
               <Maximize2 size={18} />
             </span>
           </div>
 
-          <div className="reveal grid grid-cols-4 gap-2 sm:grid-cols-7 md:grid-cols-13 md:gap-2.5">
+          {/* smooth horizontal thumbnail strip on mobile; 13-col full grid on desktop */}
+          <div className="reveal no-scrollbar flex gap-2.5 overflow-x-auto py-1 md:grid md:grid-cols-13 md:gap-2.5 md:overflow-visible md:py-0">
             {galleryImages.map((src, i) => (
               <button
                 key={src}
@@ -531,7 +574,7 @@ export default function App() {
                 onClick={() => setSlide(i)}
                 onDoubleClick={() => setLight(i)}
                 aria-label="Select photo"
-                className={`relative aspect-square overflow-hidden rounded-xl border-2 transition-all duration-300 ${
+                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 md:h-auto md:w-auto md:aspect-square ${
                   slide === i
                     ? 'scale-105 border-[#ffb627] opacity-100 shadow-lg'
                     : 'border-transparent opacity-45 hover:opacity-85'
@@ -545,18 +588,18 @@ export default function App() {
       </section>
 
       {/* plan your event */}
-      <section id="plan" className="bg-gradient-to-br from-[#d12f6a] via-[#ff7a59] to-[#ffb627] px-5 py-24 md:py-32">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
-          <div className="reveal text-white">
-            <h2 className="font-display tracking-tight text-4xl font-bold leading-tight md:text-6xl">Tell us the date. We’ll take it from there.</h2>
-            <p className="mt-5 max-w-md text-lg text-white/90">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
+      <section id="plan" className="bg-gradient-to-br from-[#d12f6a] via-[#ff7a59] to-[#ffb627] px-4 py-20 md:px-5 md:py-32">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 md:grid-cols-2 md:gap-12">
+          <div className="reveal text-center text-white md:text-left">
+            <h2 className="font-display tracking-tight text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">Tell us the date. We’ll take it from there.</h2>
+            <p className="mx-auto mt-4 max-w-md text-base text-white/90 md:mx-0 md:mt-5 md:text-lg">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
           </div>
-          <form onSubmit={submit} className="reveal space-y-5 rounded-[2rem] bg-[#fff6ea] p-6 shadow-2xl md:p-8">
+          <form onSubmit={submit} className="reveal space-y-4 rounded-[1.75rem] bg-[#fff6ea] p-5 shadow-2xl md:space-y-5 md:rounded-[2rem] md:p-8">
             <div>
               <p className="mb-2 text-sm font-semibold">What are you planning?</p>
               <div className="flex flex-wrap gap-2">
                 {eventTypes.map((t) => (
-                  <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-4 py-2 text-sm font-medium transition ${form.type === t ? 'border-[#2a1500] bg-[#2a1500] text-white' : 'border-[#2a1500]/15 bg-white hover:border-[#2a1500]/40'}`}>{t}</button>
+                  <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-3.5 py-2 text-sm font-medium transition md:px-4 ${form.type === t ? 'border-[#2a1500] bg-[#2a1500] text-white' : 'border-[#2a1500]/15 bg-white hover:border-[#2a1500]/40'}`}>{t}</button>
                 ))}
               </div>
             </div>
@@ -578,21 +621,19 @@ export default function App() {
         </div>
       </section>
 
-      {/* footer — full-scale proportions for mobile & desktop + wide letter-spacing on A ZAC VENTURE */}
+      {/* footer */}
       <footer
-        className="px-6 pb-14 pt-20 text-white sm:px-10 md:px-16 md:pb-16 md:pt-28"
+        className="px-6 pb-14 pt-16 text-white sm:px-10 md:px-16 md:pb-16 md:pt-28"
         style={{
           backgroundColor: '#080402',
           backgroundImage: 'radial-gradient(ellipse at 50% 0%, rgba(110, 62, 18, 0.28) 0%, rgba(8, 4, 2, 1) 72%)',
         }}
       >
         <div className="mx-auto max-w-7xl">
-          {/* top section */}
-          <div className="mb-16 flex flex-col justify-between gap-12 md:mb-24 md:flex-row md:items-start">
-            {/* brand column */}
-            <div className="max-w-lg">
-              <img src="/logo.png" alt="Zelaris Events" className="mb-7 w-48 md:w-56" />
-              <p className="mb-8 text-base leading-relaxed text-white/65 md:text-lg">
+          <div className="mb-12 flex flex-col items-center justify-between gap-10 text-center md:mb-24 md:flex-row md:items-start md:gap-12 md:text-left">
+            <div className="flex max-w-lg flex-col items-center md:items-start">
+              <img src="/logo.png" alt="Zelaris Events" className="mb-5 w-44 md:mb-7 md:w-56" />
+              <p className="mb-6 text-base leading-relaxed text-white/65 md:mb-8 md:text-lg">
                 Events for a brighter tomorrow. Providing budget-friendly and luxury services anywhere in India.
               </p>
               <div className="flex items-center gap-5 text-white/85">
@@ -617,13 +658,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* contact column */}
-            <div className="md:text-right">
-              <h4 className="mb-5 text-lg font-bold text-white md:text-xl">
+            <div className="text-center md:text-right">
+              <h4 className="mb-4 text-lg font-bold text-white md:mb-5 md:text-xl">
                 Contact Info
               </h4>
-              <ul className="space-y-3.5 text-base text-white/65 md:text-lg">
-                <li className="flex items-center gap-2.5 md:justify-end">
+              <ul className="space-y-3 text-base text-white/65 md:space-y-3.5 md:text-lg">
+                <li className="flex items-center justify-center gap-2.5 md:justify-end">
                   <span>Services Anywhere in India</span>
                   <MapPin size={20} className="shrink-0 text-[#d4a843]" />
                 </li>
@@ -641,10 +681,19 @@ export default function App() {
             </div>
           </div>
 
-          {/* bottom bar */}
-          <div className="grid grid-cols-1 items-center gap-6 border-t border-white/10 pt-8 text-sm text-white/45 md:grid-cols-3 md:pt-10">
-            <p className="order-2 text-center md:order-1 md:text-left">
-              &copy; {new Date().getFullYear()} Zelaris Events. All rights reserved.
+          <div className="grid grid-cols-1 items-center gap-5 border-t border-white/10 pt-8 text-sm text-white/45 md:grid-cols-3 md:gap-6 md:pt-10">
+            <p className="order-2 flex flex-wrap items-center justify-center gap-2 text-center md:order-1 md:justify-start md:text-left">
+              <span>&copy; {new Date().getFullYear()} Zelaris Events. All rights reserved.</span>
+              <span className="text-white/25">|</span>
+              <a
+                href="https://wa.me/917558957246"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Contact Developer"
+                className="font-display text-base italic text-white/75 transition hover:text-[#d4a843] md:text-lg"
+              >
+                R.
+              </a>
             </p>
 
             <p
@@ -654,24 +703,26 @@ export default function App() {
               A ZAC VENTURE
             </p>
 
-            <div className="order-3 flex justify-center md:justify-end">
-              <a
-                href="https://wa.me/917558957246"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Contact Developer"
-                className="font-display text-lg italic text-white/70 transition hover:text-[#d4a843] md:text-xl"
-              >
-                R.
-              </a>
-            </div>
+            <div className="order-3 hidden md:block" />
           </div>
         </div>
       </footer>
 
       {/* lightbox */}
       {light !== null && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#14061f]/95 p-4 backdrop-blur-md" onClick={() => setLight(null)} role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-[#14061f]/95 p-4 backdrop-blur-md"
+          onClick={() => setLight(null)}
+          onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            const delta = e.changedTouches[0].clientX - touchX.current;
+            if (Math.abs(delta) > 40) {
+              setLight((i) => (delta < 0 ? (i + 1) % galleryImages.length : (i - 1 + galleryImages.length) % galleryImages.length));
+            }
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
           <button onClick={() => setLight(null)} aria-label="Close" className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"><X size={22} /></button>
           <button onClick={(e) => { e.stopPropagation(); setLight((light - 1 + galleryImages.length) % galleryImages.length); }} aria-label="Previous photo" className="absolute left-3 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20 md:left-8"><ChevronLeft size={24} /></button>
           <img src={galleryImages[light]} alt="Zelaris event" onClick={(e) => e.stopPropagation()} className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl" />
