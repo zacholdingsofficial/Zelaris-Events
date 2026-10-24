@@ -28,16 +28,6 @@ const InstagramIcon = ({ size = 24, className = '' }) => (
   </svg>
 );
 
-/*
-  Colour palette (taken from the logo)
-  white      #ffffff   main background
-  ivory      #faf6ec   alternate sections
-  gold tint  #f6e7bd   soft gold surfaces
-  gold       #c8992b   buttons, accents
-  deep gold  #9a6f10   text accents / hover
-  ink        #1f1a14   body text
-*/
-
 const services = [
   {
     image: '/first.png', icon: <Crown size={22} />, title: 'Planning & Hospitality',
@@ -110,7 +100,6 @@ const services = [
   },
 ];
 
-// [title, description, tags, panel colours, tag colours]
 const steps = [
   [
     'Share the idea',
@@ -158,7 +147,6 @@ export default function App() {
 
   const go = (id) => lenisRef.current?.scrollTo(id, { offset: -80, duration: 1.2 });
 
-  // smooth scroll
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
     lenisRef.current = lenis;
@@ -169,21 +157,18 @@ export default function App() {
     return () => { gsap.ticker.remove(tick); lenis.destroy(); };
   }, []);
 
-  // lock scroll when lightbox is open
   useEffect(() => {
     const lock = light !== null;
     document.body.style.overflow = lock ? 'hidden' : '';
     if (lock) lenisRef.current?.stop(); else lenisRef.current?.start();
   }, [light]);
 
-  // auto-advance gallery slideshow
   useEffect(() => {
     if (light !== null) return;
     const id = setInterval(() => setSlide((s) => (s + 1) % galleryImages.length), 4000);
     return () => clearInterval(id);
   }, [light]);
 
-  // lightbox keyboard navigation
   useEffect(() => {
     if (light === null) return;
     const onKey = (e) => {
@@ -195,7 +180,6 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [light]);
 
-  // page animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -206,7 +190,6 @@ export default function App() {
         .from('.hero-fade', { y: 20, opacity: 0, duration: 0.7, stagger: 0.1 }, '-=0.5')
         .from('.hero-cols', { y: 50, opacity: 0, duration: 1 }, 0.1);
 
-      // stacking cards (desktop + mobile): each card sticks, the next one slides over it
       const cards = gsap.utils.toArray('.stack-card');
       if (!reduce) {
         cards.slice(0, -1).forEach((c, i) => {
@@ -241,10 +224,10 @@ export default function App() {
   const field = 'w-full rounded-lg border border-[#1f1a14]/15 bg-white px-3.5 py-2.5 text-sm text-[#1f1a14] outline-none transition focus:border-[#c8992b] focus:ring-4 focus:ring-[#c8992b]/20';
 
   return (
-    <div ref={root} className="page-bg relative text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip' }}>
+    <div ref={root} className="page-bg relative text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Montserrat', system-ui, sans-serif", overflowX: 'clip' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap');
+        .font-display { font-family: 'Cormorant Garamond', Georgia, serif; letter-spacing: -0.01em; }
         .page-bg { background: linear-gradient(180deg,#fff4d9 0%,#fffaf0 6%,#ffffff 12%,#fff0f4 20%,#fffaf0 28%,#ffffff 36%,#eef4ff 45%,#fff8e6 54%,#ffffff 62%,#fdf0e0 71%,#fffdf6 80%,#fff4d9 90%,#f8e6b5 100%); }
         @media (min-width: 768px) { .page-bg { background: linear-gradient(180deg,#fdebb8 0%,#fff6dc 12%,#ffffff 25%,#f6f3ec 37%,#fbecc4 50%,#fffaf0 63%,#f4f1ea 75%,#f8e2a6 90%,#f3dc9a 100%); } }
         @keyframes drift { 0%,100% { transform: translate(0,0) scale(1) } 50% { transform: translate(30px,-20px) scale(1.1) } }
@@ -272,7 +255,7 @@ export default function App() {
           <button onClick={() => go('#top')} aria-label="Back to top" className="shrink-0">
             <img src="/logo.png" alt="Zelaris Events" className="h-10 w-auto md:h-11" />
           </button>
-          <div className="hidden items-center gap-7 text-[15px] font-semibold lg:flex">
+          <div className="hidden items-center gap-7 text-[13px] uppercase tracking-widest font-medium lg:flex">
             {navItems.map(([id, label]) => (
               <button key={id} onClick={() => go(`#${id}`)} className={`relative py-1 transition ${active === id ? 'text-[#ffe08a]' : 'text-white/80 hover:text-white'}`}>
                 {label}
@@ -280,9 +263,9 @@ export default function App() {
               </button>
             ))}
           </div>
-          <span className="truncate text-sm font-semibold text-[#ffe08a] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
-          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#fff1c9] to-[#ffd9b0] px-4 py-2.5 text-sm font-semibold text-[#2b1d0a] transition hover:scale-105">
-            <WhatsAppIcon size={16} /> <span className="hidden sm:inline">Chat with us</span><span className="sm:hidden">Chat</span>
+          <span className="truncate text-xs tracking-wider uppercase font-medium text-[#ffe08a] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
+          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#fff1c9] to-[#ffd9b0] px-4 py-2.5 text-sm font-medium transition hover:scale-105">
+            <WhatsAppIcon size={16} className="text-[#2b1d0a]" /> <span className="hidden text-[#2b1d0a] sm:inline">Chat with us</span><span className="sm:hidden text-[#2b1d0a]">Chat</span>
           </a>
         </nav>
       </header>
@@ -300,21 +283,21 @@ export default function App() {
 
         <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-4 px-5 py-4 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8 md:py-8">
           <div className="hero-copy text-center md:text-left">
-            <h1 className="font-display text-[1.9rem] font-bold leading-[1.12] tracking-tight sm:text-5xl xl:text-[3.5rem]">
+            <h1 className="font-display text-[1.9rem] font-medium leading-[1.12] tracking-tight sm:text-5xl xl:text-[3.5rem]">
               {'Your celebration, planned down to the last detail.'.split(' ').map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden pb-1 align-bottom">
                   <span className="hero-word inline-block">{w}&nbsp;</span>
                 </span>
               ))}
             </h1>
-            <p className="hero-fade mx-auto mt-3 max-w-lg text-sm leading-relaxed md:mt-5 md:text-[17px] text-[#1f1a14]/70 md:mx-0">
+            <p className="hero-fade mx-auto mt-3 max-w-lg text-sm font-light leading-relaxed md:mt-5 md:text-[17px] text-[#1f1a14]/70 md:mx-0">
               Weddings, receptions and corporate events anywhere in India. Décor, catering, grand entries and cinematic coverage, all handled by one friendly team.
             </p>
             <div className="hero-fade mt-4 flex flex-row items-center justify-center gap-2.5 md:mt-7 md:justify-start md:gap-3">
-              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-5 py-2.5 text-[15px] font-semibold text-[#1f1a14] shadow-md md:px-6 md:py-3 md:text-base transition hover:bg-[#b8891f]">
+              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-5 py-2.5 text-[14px] font-medium tracking-wide text-[#1f1a14] shadow-md md:px-6 md:py-3 md:text-[15px] transition hover:bg-[#b8891f]">
                 Book your event <ArrowUpRight size={18} />
               </a>
-              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-5 py-2.5 text-[15px] font-medium md:px-6 md:py-3 md:text-base text-[#1f1a14] transition hover:bg-[#faf6ec]">
+              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-5 py-2.5 text-[14px] font-medium tracking-wide md:px-6 md:py-3 md:text-[15px] text-[#1f1a14] transition hover:bg-[#faf6ec]">
                 See what we do
               </button>
             </div>
@@ -338,7 +321,7 @@ export default function App() {
 
         {/* gold ticker */}
         <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-2.5 text-[#1f1a14] md:py-3">
-          <div className="marquee flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold md:text-xl">
+          <div className="marquee flex w-max gap-8 whitespace-nowrap font-display text-lg font-medium md:text-xl">
             {[...marquee, ...marquee, ...marquee, ...marquee].map((m, i) => (
               <span key={i} className="flex items-center gap-8">{m}<Sparkles size={18} /></span>
             ))}
@@ -349,8 +332,8 @@ export default function App() {
       {/* services */}
       <section id="services" className="mx-auto max-w-7xl scroll-mt-24 px-4 pb-20 pt-20 md:px-8 md:pt-28">
         <div className="reveal mb-10 max-w-2xl md:mb-14">
-          <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Everything your day needs, under one roof.</h2>
-          <p className="mt-3 text-base text-[#1f1a14]/70 md:text-lg">From the first idea to the last dance. Scroll through what we take care of.</p>
+          <h2 className="font-display text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Everything your day needs, under one roof.</h2>
+          <p className="mt-3 text-base font-light text-[#1f1a14]/70 md:text-lg">From the first idea to the last dance. Scroll through what we take care of.</p>
         </div>
 
         {services.map((s, i) => (
@@ -358,12 +341,12 @@ export default function App() {
             <div className={`flex h-[clamp(540px,calc(100svh-8.5rem),700px)] flex-col overflow-hidden rounded-3xl border border-[#eadfc4] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] md:grid md:h-[clamp(560px,calc(100svh-8rem),680px)] md:grid-cols-2 ${s.tone}`}>
               <div className="flex shrink-0 flex-col justify-center gap-2 p-4 md:shrink md:gap-4 md:p-10">
                 <span className="hidden h-11 w-11 place-items-center rounded-xl bg-black/10 md:grid">{s.icon}</span>
-                <h3 className="font-display text-2xl font-bold tracking-tight md:text-4xl">{s.title}</h3>
-                <p className="text-sm opacity-80 md:text-lg">{s.short}</p>
-                <ul className="space-y-1 md:space-y-2">
+                <h3 className="font-display text-3xl font-medium tracking-tight md:text-4xl">{s.title}</h3>
+                <p className="text-sm font-light opacity-80 md:text-lg">{s.short}</p>
+                <ul className="space-y-1 md:space-y-2 mt-2">
                   {s.details.map((d) => (
-                    <li key={d} className="flex items-start gap-2 text-[13px] leading-snug md:gap-2.5 md:text-base">
-                      <CheckCircle2 size={16} className="mt-0.5 shrink-0" /> <span>{d}</span>
+                    <li key={d} className="flex items-start gap-2 text-[13px] font-light leading-snug md:gap-2.5 md:text-base">
+                      <CheckCircle2 size={16} className="mt-0.5 shrink-0 opacity-80" /> <span>{d}</span>
                     </li>
                   ))}
                 </ul>
@@ -380,10 +363,10 @@ export default function App() {
       <section id="how" className="mx-auto flex min-h-[100svh] max-w-7xl scroll-mt-24 flex-col justify-center px-4 pb-6 pt-[5.5rem] md:block md:min-h-0 md:px-8 md:pb-28 md:pt-8">
         <div>
           <div className="reveal mb-4 flex flex-col justify-between gap-1.5 md:mb-12 md:flex-row md:items-end">
-            <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl lg:text-4xl">
+            <h2 className="font-display text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">
               From “hello” to the last dance.
             </h2>
-            <p className="max-w-md text-sm text-[#1f1a14]/70 md:text-lg">
+            <p className="max-w-md text-sm font-light text-[#1f1a14]/70 md:text-lg">
               Tap or hover through how we bring your celebration together.
             </p>
           </div>
@@ -408,10 +391,10 @@ export default function App() {
                       open ? 'pointer-events-none opacity-0' : 'opacity-100 delay-100'
                     }`}
                   >
-                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
+                    <span className="font-display whitespace-nowrap text-xl font-medium tracking-tight md:rotate-180 md:text-2xl md:[writing-mode:vertical-rl]">
                       {title}
                     </span>
-                    <span className="text-xs font-semibold opacity-50 md:hidden">Open</span>
+                    <span className="text-xs font-light opacity-50 md:hidden">Open</span>
                   </div>
 
                   <div
@@ -420,12 +403,12 @@ export default function App() {
                     }`}
                   >
                     <div className="max-w-lg">
-                      <h3 className="font-display text-2xl font-bold tracking-tight md:text-4xl">{title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
+                      <h3 className="font-display text-2xl font-medium tracking-tight md:text-4xl">{title}</h3>
+                      <p className="mt-2 text-sm font-light leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {tags.map((t) => (
-                        <span key={t} className={`rounded-full px-3 py-1.5 text-xs font-semibold md:px-3.5 md:py-1.5 md:text-[0.8rem] ${pillTone}`}>{t}</span>
+                        <span key={t} className={`rounded-full px-3 py-1.5 text-xs font-medium md:px-3.5 md:py-1.5 md:text-[0.8rem] ${pillTone}`}>{t}</span>
                       ))}
                     </div>
                   </div>
@@ -441,10 +424,10 @@ export default function App() {
         <div className="mx-auto max-w-5xl">
           <div className="reveal mb-3 flex items-end justify-between gap-3 md:mb-6">
             <div>
-              <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl lg:text-4xl">
+              <h2 className="font-display text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">
                 Events we’ve brought to life.
               </h2>
-              <p className="mt-2 hidden text-sm text-[#1f1a14]/70 md:block md:text-base">
+              <p className="mt-2 hidden text-sm font-light text-[#1f1a14]/70 md:block md:text-base">
                 Pick any photo below or tap the stage to view it full screen.
               </p>
             </div>
@@ -516,30 +499,30 @@ export default function App() {
       <section id="plan" className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center px-4 pb-6 pt-[5.5rem] md:block md:min-h-0 md:px-5 md:py-28">
         <div className="mx-auto grid w-full max-w-7xl items-center gap-5 md:grid-cols-2 md:gap-12">
           <div className="reveal">
-            <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Tell us the date. We’ll take it from there.</h2>
-            <p className="mt-4 hidden max-w-md text-base text-[#1f1a14]/80 md:block md:text-lg">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
+            <h2 className="font-display text-3xl font-medium leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Tell us the date. We’ll take it from there.</h2>
+            <p className="mt-4 hidden max-w-md text-base font-light text-[#1f1a14]/80 md:block md:text-lg">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
           </div>
           <form onSubmit={submit} className="reveal space-y-3 rounded-3xl border border-[#eadfc4] bg-white p-4 shadow-xl md:space-y-4 md:p-7">
             <div>
-              <p className="mb-2 text-sm font-semibold">What are you planning?</p>
+              <p className="mb-2 text-sm font-medium">What are you planning?</p>
               <div className="flex flex-wrap gap-2">
                 {eventTypes.map((t) => (
                   <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${form.type === t ? 'border-[#c8992b] bg-[#c8992b] text-[#1f1a14]' : 'border-[#1f1a14]/15 bg-white hover:border-[#c8992b]'}`}>{t}</button>
                 ))}
               </div>
             </div>
-            <label className="block text-sm font-semibold">Your name
-              <input className={`${field} mt-1.5 font-normal`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" autoComplete="name" />
+            <label className="block text-sm font-medium">Your name
+              <input className={`${field} mt-1.5 font-light`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" autoComplete="name" />
             </label>
             <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <label className="block text-sm font-semibold">Event date
-                <input type="date" className={`${field} mt-1.5 font-normal`} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+              <label className="block text-sm font-medium">Event date
+                <input type="date" className={`${field} mt-1.5 font-light`} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
               </label>
-              <label className="block text-sm font-semibold">Guests
-                <input type="number" min="1" inputMode="numeric" className={`${field} mt-1.5 font-normal`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
+              <label className="block text-sm font-medium">Guests
+                <input type="number" min="1" inputMode="numeric" className={`${field} mt-1.5 font-light`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
               </label>
             </div>
-            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-3 text-sm font-semibold text-white transition hover:bg-[#9a6f10]">
+            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-3 text-sm font-medium text-white transition hover:bg-[#9a6f10]">
               <Send size={16} /> Send on WhatsApp
             </button>
           </form>
@@ -552,7 +535,7 @@ export default function App() {
           <div className="mb-12 flex flex-col justify-between gap-10 md:flex-row md:items-start">
             <div className="max-w-md">
               <img src="/logo.png" alt="Zelaris Events" className="mb-5 w-40 md:w-48" />
-              <p className="mb-6 text-sm leading-relaxed text-white/70 md:text-base">
+              <p className="mb-6 text-sm font-light leading-relaxed text-white/70 md:text-base">
                 Events for a brighter tomorrow. Providing budget-friendly and luxury services anywhere in India.
               </p>
               <div className="flex items-center gap-4 text-white/85">
@@ -566,8 +549,8 @@ export default function App() {
             </div>
 
             <div className="md:text-right">
-              <h4 className="mb-4 text-base font-bold">Contact Info</h4>
-              <ul className="space-y-3 text-sm text-white/70 md:text-base">
+              <h4 className="mb-4 text-base font-medium">Contact Info</h4>
+              <ul className="space-y-3 text-sm font-light text-white/70 md:text-base">
                 <li className="flex items-center gap-2 md:justify-end">
                   <span>Services Anywhere in India</span>
                   <MapPin size={18} className="shrink-0 text-[#ffe08a]" />
@@ -578,20 +561,20 @@ export default function App() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 items-center gap-4 border-t border-white/15 pt-6 text-sm text-white/55 md:grid-cols-3">
+          <div className="grid grid-cols-1 items-center gap-4 border-t border-white/15 pt-6 text-sm font-light text-white/55 md:grid-cols-3">
             <p className="order-2 text-center md:order-1 md:text-left">
               &copy; {new Date().getFullYear()} Zelaris Events. All rights reserved.
             </p>
 
             <p
-              className="font-display order-1 text-center text-xs font-bold uppercase text-[#ffe08a] md:order-2 md:text-sm"
-              style={{ letterSpacing: '0.3em', paddingLeft: '0.3em' }}
+              className="order-1 text-center text-xs font-medium uppercase tracking-[0.3em] text-[#ffe08a] md:order-2 md:text-sm"
+              style={{ paddingLeft: '0.3em' }}
             >
               A ZAC VENTURE
             </p>
 
             <div className="order-3 flex justify-center md:justify-end">
-              <a href="https://wa.me/917558957246" target="_blank" rel="noopener noreferrer" title="Contact Developer" className="font-display text-base italic text-white/65 transition hover:text-[#ffe08a]">
+              <a href="https://wa.me/917558957246" target="_blank" rel="noopener noreferrer" title="Contact Developer" className="font-display text-lg italic text-white/65 transition hover:text-[#ffe08a]">
                 R.
               </a>
             </div>
