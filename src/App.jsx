@@ -196,7 +196,6 @@ export default function App() {
 
   // page animations
   useEffect(() => {
-    let onRefresh;
     const ctx = gsap.context(() => {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const desktop = window.matchMedia('(min-width: 768px)').matches;
@@ -208,19 +207,6 @@ export default function App() {
 
       // stacking cards (desktop + mobile): each card sticks, the next one slides over it
       const cards = gsap.utils.toArray('.stack-card');
-      const setTops = () => {
-        const vh = window.innerHeight;
-        const wide = window.innerWidth >= 768;
-        cards.forEach((c, i) => {
-          if (wide) { c.style.top = c.dataset.top; return; }
-          // phones: a card taller than the screen sticks by its bottom edge instead
-          const fit = vh - c.offsetHeight - 16;
-          c.style.top = `${Math.min(84 + i * 8, fit)}px`;
-        });
-      };
-      setTops();
-      onRefresh = setTops;
-      ScrollTrigger.addEventListener('refreshInit', onRefresh);
       if (!reduce) {
         cards.slice(0, -1).forEach((c, i) => {
           gsap.to(c, { scale: desktop ? 0.96 : 0.94, ease: 'none', scrollTrigger: { trigger: cards[i + 1], start: 'top 85%', end: 'top 15%', scrub: true } });
@@ -239,7 +225,6 @@ export default function App() {
     }, root);
 
     return () => {
-      if (onRefresh) ScrollTrigger.removeEventListener('refreshInit', onRefresh);
       ctx.revert();
     };
   }, []);
@@ -255,10 +240,12 @@ export default function App() {
   const field = 'w-full rounded-lg border border-[#1f1a14]/15 bg-white px-3.5 py-2.5 text-sm text-[#1f1a14] outline-none transition focus:border-[#c8992b] focus:ring-4 focus:ring-[#c8992b]/20';
 
   return (
-    <div ref={root} className="relative text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip', background: 'linear-gradient(180deg,#fdebb8 0%,#fff6dc 12%,#ffffff 25%,#f6f3ec 37%,#fbecc4 50%,#fffaf0 63%,#f4f1ea 75%,#f8e2a6 90%,#f3dc9a 100%)' }}>
+    <div ref={root} className="page-bg relative text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         .font-display { font-family: 'Fraunces', Georgia, serif; }
+        .page-bg { background: linear-gradient(180deg,#fff4d9 0%,#fffaf0 6%,#ffffff 12%,#fff0f4 20%,#fffaf0 28%,#ffffff 36%,#eef4ff 45%,#fff8e6 54%,#ffffff 62%,#fdf0e0 71%,#fffdf6 80%,#fff4d9 90%,#f8e6b5 100%); }
+        @media (min-width: 768px) { .page-bg { background: linear-gradient(180deg,#fdebb8 0%,#fff6dc 12%,#ffffff 25%,#f6f3ec 37%,#fbecc4 50%,#fffaf0 63%,#f4f1ea 75%,#f8e2a6 90%,#f3dc9a 100%); } }
         @keyframes drift { 0%,100% { transform: translate(0,0) scale(1) } 50% { transform: translate(30px,-20px) scale(1.1) } }
         @keyframes marquee { to { transform: translateX(-50%) } }
         @keyframes colup { to { transform: translateY(-50%) } }
@@ -365,21 +352,21 @@ export default function App() {
         </div>
 
         {services.map((s, i) => (
-          <article key={s.title} className="stack-card sticky mb-[8vh] md:mb-[12vh]" data-top={`calc(5.5rem + ${i * 0.5}rem)`} style={{ top: `calc(5.5rem + ${i * 0.5}rem)` }}>
-            <div className={`grid overflow-hidden rounded-3xl border border-[#eadfc4] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] md:h-[clamp(560px,calc(100dvh-8rem),680px)] md:grid-cols-2 ${s.tone}`}>
-              <div className="flex flex-col justify-center gap-3 p-5 md:gap-4 md:p-10">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-black/10">{s.icon}</span>
+          <article key={s.title} className="stack-card sticky mb-[8vh] md:mb-[12vh]" style={{ top: `calc(5.5rem + ${i * 0.4}rem)` }}>
+            <div className={`flex h-[clamp(540px,calc(100dvh-8.5rem),700px)] flex-col overflow-hidden rounded-3xl border border-[#eadfc4] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] md:grid md:h-[clamp(560px,calc(100dvh-8rem),680px)] md:grid-cols-2 ${s.tone}`}>
+              <div className="flex shrink-0 flex-col justify-center gap-2 p-4 md:shrink md:gap-4 md:p-10">
+                <span className="hidden h-11 w-11 place-items-center rounded-xl bg-black/10 md:grid">{s.icon}</span>
                 <h3 className="font-display text-2xl font-bold tracking-tight md:text-4xl">{s.title}</h3>
-                <p className="text-base opacity-80 md:text-lg">{s.short}</p>
-                <ul className="space-y-1.5 md:space-y-2">
+                <p className="text-sm opacity-80 md:text-lg">{s.short}</p>
+                <ul className="space-y-1 md:space-y-2">
                   {s.details.map((d) => (
-                    <li key={d} className="flex items-start gap-2.5 text-sm leading-snug md:text-base">
+                    <li key={d} className="flex items-start gap-2 text-[13px] leading-snug md:gap-2.5 md:text-base">
                       <CheckCircle2 size={16} className="mt-0.5 shrink-0" /> <span>{d}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="relative order-first min-h-[200px] md:order-last md:min-h-full">
+              <div className="relative order-first min-h-[110px] flex-1 md:order-last md:min-h-full md:flex-none">
                 <img src={s.image} alt={s.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
               </div>
             </div>
@@ -399,7 +386,7 @@ export default function App() {
             </p>
           </div>
 
-          <div className="reveal flex h-[440px] flex-col gap-3 md:h-[330px] md:flex-row">
+          <div className="reveal flex h-[640px] flex-col gap-3 md:h-[330px] md:flex-row">
             {steps.map(([title, desc, tags, tone, pillTone], i) => {
               const open = step === i;
               return (
@@ -419,24 +406,24 @@ export default function App() {
                       open ? 'pointer-events-none opacity-0' : 'opacity-100 delay-100'
                     }`}
                   >
-                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
+                    <span className="font-display whitespace-nowrap text-xl font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
                       {title}
                     </span>
                     <span className="text-xs font-semibold opacity-50 md:hidden">Open</span>
                   </div>
 
                   <div
-                    className={`absolute inset-0 flex flex-col justify-between p-5 transition-opacity duration-300 sm:p-6 md:right-auto md:w-[34rem] md:p-8 ${
+                    className={`absolute inset-0 flex flex-col justify-between p-6 transition-opacity duration-300 md:right-auto md:w-[34rem] md:p-8 ${
                       open ? 'opacity-100 delay-150' : 'pointer-events-none opacity-0'
                     }`}
                   >
                     <div className="max-w-lg">
-                      <h3 className="font-display text-2xl font-bold tracking-tight sm:text-2xl md:text-4xl">{title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
+                      <h3 className="font-display text-3xl font-bold tracking-tight md:text-4xl">{title}</h3>
+                      <p className="mt-3 text-base leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {tags.map((t) => (
-                        <span key={t} className={`rounded-full px-3.5 py-1.5 text-xs font-semibold sm:text-sm ${pillTone}`}>{t}</span>
+                        <span key={t} className={`rounded-full px-4 py-2 text-sm font-semibold md:px-3.5 md:py-1.5 md:text-[0.8rem] ${pillTone}`}>{t}</span>
                       ))}
                     </div>
                   </div>
