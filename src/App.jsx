@@ -39,9 +39,9 @@ const InstagramIcon = ({ size = 24, className = '' }) => (
 
 const services = [
   {
-    image: '/first.png', icon: <Crown size={22} />, title: 'Planning & Hospitality',
+    image: '/first.png', icon: <Crown size={26} />, title: 'Planning & Hospitality',
     short: 'A–Z event planning, VIP hospitality and flawless coordination.',
-    tone: 'bg-[#f6e7bd] text-[#1f1a14]',
+    tone: 'bg-gradient-to-br from-[#fff2cc] to-[#f6d98a] text-[#1f1a14]',
     details: [
       'Complete A–Z event planning & personalized concepts',
       'Luxury and budget-friendly destination wedding packages',
@@ -54,9 +54,9 @@ const services = [
     ],
   },
   {
-    image: '/second.png', icon: <Sparkles size={22} />, title: 'Theme & Décor',
+    image: '/second.png', icon: <Sparkles size={26} />, title: 'Theme & Décor',
     short: 'Custom stages, floral designs and premium venue transformations.',
-    tone: 'bg-white text-[#1f1a14]',
+    tone: 'bg-gradient-to-br from-[#ffffff] to-[#efebe0] text-[#1f1a14]',
     details: [
       'Theme-based wedding & premium stage decorations',
       'Custom floral designs tailored to client preferences',
@@ -65,9 +65,9 @@ const services = [
     ],
   },
   {
-    image: '/third.png', icon: <Utensils size={22} />, title: 'Premium Catering',
+    image: '/third.png', icon: <Utensils size={26} />, title: 'Premium Catering',
     short: 'Customized menus, diverse counters and efficient catering staff.',
-    tone: 'bg-[#c8992b] text-[#1f1a14]',
+    tone: 'bg-gradient-to-br from-[#f3d57e] to-[#d9a93a] text-[#1f1a14]',
     details: [
       'Premium catering with custom-tailored delicious menus',
       'Specialty juice, tea, and unique dessert counters',
@@ -76,9 +76,9 @@ const services = [
     ],
   },
   {
-    image: '/fourth.png', icon: <Wand2 size={22} />, title: 'Grand Entries & VFX',
+    image: '/fourth.png', icon: <Wand2 size={26} />, title: 'Grand Entries & VFX',
     short: 'Pyrotechnics, LED walls and spectacular bride & groom entries.',
-    tone: 'bg-[#faf6ec] text-[#1f1a14]',
+    tone: 'bg-gradient-to-br from-[#fbf7ee] to-[#e2dac6] text-[#1f1a14]',
     details: [
       'Spectacular bride & groom entry concepts with VFX',
       'Cold pyrotechnics, fireworks, and special effects',
@@ -87,9 +87,9 @@ const services = [
     ],
   },
   {
-    image: '/fifth.png', icon: <Camera size={22} />, title: 'Cinematic Media',
+    image: '/fifth.png', icon: <Camera size={26} />, title: 'Cinematic Media',
     short: 'Professional photography, drone coverage and highlight reels.',
-    tone: 'bg-[#f6e7bd] text-[#1f1a14]',
+    tone: 'bg-gradient-to-br from-[#ffe9b0] to-[#e8b84f] text-[#1f1a14]',
     details: [
       'Cinematic videography & professional photography',
       'Live streaming and comprehensive drone coverage',
@@ -98,9 +98,9 @@ const services = [
     ],
   },
   {
-    image: '/sixth.png', icon: <CalendarCheck size={22} />, title: 'Scope & Future',
+    image: '/sixth.png', icon: <CalendarCheck size={26} />, title: 'Scope & Future',
     short: 'Meeting the growing demand for professional event organizers.',
-    tone: 'bg-white text-[#1f1a14]',
+    tone: 'bg-gradient-to-br from-[#ffffff] to-[#f9e8bd] text-[#1f1a14]',
     details: [
       'Expanding industry scope due to increasing demand',
       'Focus on customized catering and destination weddings',
@@ -115,29 +115,29 @@ const steps = [
     'Share the idea',
     'Tell us the occasion, the guest count and the mood you have in mind. We study the venue layout and build a clear plan that fits your budget.',
     ['Venue layout', 'Guest flow', 'Mood & theme', 'Budget plan'],
-    'bg-[#faf6ec] text-[#1f1a14] border border-[#eadfc4]',
-    'bg-[#f6e7bd] text-[#1f1a14]',
+    'bg-gradient-to-br from-[#fbf7ee] to-[#e2dac6] text-[#1f1a14]',
+    'bg-white/65 text-[#1f1a14]',
   ],
   [
     'Shape the plan',
     'Before anything is built on site, you see a 3D preview of the stage and decor alongside a tailored menu and live counter selection.',
     ['Custom concepts', '3D venue preview', 'Stage & florals', 'Menu selection'],
-    'bg-[#f6e7bd] text-[#1f1a14]',
-    'bg-white/70 text-[#1f1a14]',
+    'bg-gradient-to-br from-[#fff2cc] to-[#f6d98a] text-[#1f1a14]',
+    'bg-white/65 text-[#1f1a14]',
   ],
   [
     'Run the day',
     'One team looks after the entire floor. Stage setup, catering counters, guest parking, VIP hospitality and grand entries run together smoothly.',
     ['Stage & decor', 'Full catering', 'Grand entries', 'Guest care'],
-    'bg-[#c8992b] text-[#1f1a14]',
-    'bg-white/60 text-[#1f1a14]',
+    'bg-gradient-to-br from-[#f3d57e] to-[#d9a93a] text-[#1f1a14]',
+    'bg-white/65 text-[#1f1a14]',
   ],
   [
     'Relive it all',
     'While you spend time with family and guests, our photo and drone crew capture the celebration and put together your highlight film.',
     ['Photography', 'Cinema film', 'Drone coverage', 'Highlight edit'],
-    'bg-[#1f1a14] text-white',
-    'bg-white/10 text-[#e6c36a]',
+    'bg-gradient-to-br from-[#ffffff] to-[#efebe0] text-[#1f1a14]',
+    'bg-white/65 text-[#1f1a14]',
   ],
 ];
 
@@ -234,10 +234,10 @@ export default function App() {
     window.open(wa(`${parts.join(' ')}. Can we talk?`), '_blank', 'noopener');
   };
 
-  const field = 'w-full rounded-lg border border-[#1f1a14]/15 bg-white px-3.5 py-2.5 text-sm text-[#1f1a14] outline-none transition focus:border-[#c8992b] focus:ring-4 focus:ring-[#c8992b]/20';
+  const field = 'w-full rounded-xl border border-[#1f1a14]/15 bg-white px-4 py-3 text-[15px] text-[#1f1a14] outline-none transition focus:border-[#c8992b] focus:ring-4 focus:ring-[#c8992b]/20';
 
   return (
-    <div ref={root} className="relative bg-white text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip' }}>
+    <div ref={root} className="relative text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip', background: 'linear-gradient(180deg,#fdebb8 0%,#fff6dc 12%,#ffffff 25%,#f6f3ec 37%,#fbecc4 50%,#fffaf0 63%,#f4f1ea 75%,#f8e2a6 90%,#f3dc9a 100%)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         .font-display { font-family: 'Fraunces', Georgia, serif; }
@@ -260,67 +260,67 @@ export default function App() {
       <div className="progress fixed left-0 top-0 z-[90] h-[3px] w-full origin-left scale-x-0 bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#9a6f10]" />
 
       {/* nav */}
-      <header className="fixed left-0 top-0 z-[80] w-full border-b border-[#1f1a14]/10 bg-white/90 backdrop-blur-md">
-        <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 md:px-6">
+      <header className="fixed left-0 top-3 z-[80] flex w-full justify-center px-3 md:top-4">
+        <nav className="flex w-full max-w-5xl items-center justify-between gap-3 rounded-full border border-white/30 bg-gradient-to-r from-[#2b1d0a] via-[#6b4a10] to-[#b88a22] py-2.5 pl-5 pr-2.5 text-white shadow-[0_12px_40px_-12px_rgba(60,35,5,0.55)] md:pl-7">
           <button onClick={() => go('#top')} aria-label="Back to top" className="shrink-0">
             <img src="/logo.png" alt="Zelaris Events" className="h-10 w-auto md:h-12" />
           </button>
-          <div className="hidden items-center gap-7 text-sm font-semibold lg:flex">
+          <div className="hidden items-center gap-8 text-[17px] font-semibold lg:flex">
             {navItems.map(([id, label]) => (
-              <button key={id} onClick={() => go(`#${id}`)} className={`relative py-1 transition ${active === id ? 'text-[#9a6f10]' : 'text-[#1f1a14]/70 hover:text-[#1f1a14]'}`}>
+              <button key={id} onClick={() => go(`#${id}`)} className={`relative py-1 transition ${active === id ? 'text-[#ffe08a]' : 'text-white/80 hover:text-white'}`}>
                 {label}
-                <span className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full bg-[#c8992b] transition-all duration-300 ${active === id ? 'w-full' : 'w-0'}`} />
+                <span className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full bg-[#ffe08a] transition-all duration-300 ${active === id ? 'w-full' : 'w-0'}`} />
               </button>
             ))}
           </div>
-          <span className="truncate text-sm font-semibold text-[#9a6f10] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
-          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-[#c8992b] px-4 py-2 text-sm font-semibold text-[#1f1a14] transition hover:bg-[#b8891f]">
-            <WhatsAppIcon size={16} /> <span className="hidden sm:inline">Chat with us</span><span className="sm:hidden">Chat</span>
+          <span className="truncate text-base font-semibold text-[#ffe08a] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
+          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#fff1c9] to-[#ffd9b0] px-5 py-3 text-base font-semibold text-[#2b1d0a] transition hover:scale-105">
+            <WhatsAppIcon size={18} /> <span className="hidden sm:inline">Chat with us</span><span className="sm:hidden">Chat</span>
           </a>
         </nav>
       </header>
 
       {/* floating whatsapp */}
-      <a href={wa('Hi Zelaris Events!')} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-[80] grid h-12 w-12 place-items-center rounded-full bg-[#25d366] text-white shadow-lg transition hover:scale-105">
+      <a href={wa('Hi Zelaris Events!')} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-[80] grid h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-lg transition hover:scale-105">
         <span className="ping2 absolute inset-0 rounded-full bg-[#25d366]/50" />
-        <WhatsAppIcon size={24} className="relative" />
+        <WhatsAppIcon size={28} className="relative" />
       </a>
 
       {/* hero */}
-      <section id="top" className="relative flex flex-col overflow-hidden bg-white pt-16 text-[#1f1a14] md:min-h-[100dvh]">
-        <div className="drift absolute -left-24 top-20 h-80 w-80 rounded-full bg-[#f6e7bd]/70 blur-[100px]" />
-        <div className="drift absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-[#f6e7bd]/60 blur-[110px]" style={{ animationDelay: '-6s' }} />
+      <section id="top" className="relative flex flex-col min-h-[100dvh] overflow-hidden pt-28 text-[#1f1a14] md:pt-32">
+        <div className="drift absolute -left-24 top-20 h-80 w-80 rounded-full bg-[#f3d57e]/50 blur-[100px]" />
+        <div className="drift absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-[#e8c25a]/30 blur-[110px]" style={{ animationDelay: '-6s' }} />
 
-        <div className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 items-center gap-8 px-4 py-10 md:grid-cols-[1.1fr_1fr] md:gap-12 md:px-6 md:py-12">
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-8 px-5 pb-4 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8">
           <div className="hero-copy text-center md:text-left">
-            <h1 className="font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-display text-[2.5rem] font-bold leading-[1.04] tracking-tight sm:text-6xl xl:text-[4.8rem]">
               {'Your celebration, planned down to the last detail.'.split(' ').map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden pb-1 align-bottom">
                   <span className="hero-word inline-block">{w}&nbsp;</span>
                 </span>
               ))}
             </h1>
-            <p className="hero-fade mx-auto mt-5 max-w-lg text-base leading-relaxed text-[#1f1a14]/70 md:mx-0">
+            <p className="hero-fade mx-auto mt-6 max-w-xl text-base leading-relaxed md:text-lg text-[#1f1a14]/70 md:mx-0">
               Weddings, receptions and corporate events anywhere in India. Décor, catering, grand entries and cinematic coverage, all handled by one friendly team.
             </p>
-            <div className="hero-fade mt-7 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
-              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-6 py-3 text-base font-semibold text-[#1f1a14] shadow-md transition hover:bg-[#b8891f]">
-                Book your event <ArrowUpRight size={18} />
+            <div className="hero-fade mt-8 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
+              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-8 py-4 text-lg font-semibold text-[#1f1a14] shadow-md transition hover:bg-[#b8891f]">
+                Book your event <ArrowUpRight size={20} />
               </a>
-              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-6 py-3 text-base font-medium text-[#1f1a14] transition hover:bg-[#faf6ec]">
+              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-8 py-4 text-lg font-medium text-[#1f1a14] transition hover:bg-[#faf6ec]">
                 See what we do
               </button>
             </div>
           </div>
 
-          <div className="hero-cols grid h-[320px] grid-cols-2 gap-3 md:h-[480px]" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
+          <div className="hero-cols grid h-[34vh] grid-cols-2 gap-3 md:h-[66vh] md:gap-4" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
             {[0, 1].map((col) => {
               const order = col ? [3, 4, 5, 0, 1, 2] : [0, 1, 2, 3, 4, 5];
               return (
                 <div key={col} className="overflow-hidden">
                   <div className={col ? 'col-down' : 'col-up'}>
                     {[...order, ...order].map((n, i) => (
-                      <img key={i} src={services[n].image} alt={i < 6 ? services[n].title : ''} aria-hidden={i >= 6} className="mb-3 aspect-[3/4] w-full rounded-2xl object-cover shadow-md" />
+                      <img key={i} src={services[n].image} alt={i < 6 ? services[n].title : ''} aria-hidden={i >= 6} className="mb-3 aspect-[3/4] w-full rounded-3xl object-cover shadow-md md:mb-4" />
                     ))}
                   </div>
                 </div>
@@ -330,38 +330,38 @@ export default function App() {
         </div>
 
         {/* gold ticker */}
-        <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-3 text-[#1f1a14]">
-          <div className="marquee flex w-max gap-8 whitespace-nowrap font-display text-base font-bold md:text-lg">
+        <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-4 text-[#1f1a14]">
+          <div className="marquee flex w-max gap-10 whitespace-nowrap font-display text-xl font-bold md:text-2xl">
             {[...marquee, ...marquee, ...marquee, ...marquee].map((m, i) => (
-              <span key={i} className="flex items-center gap-8">{m}<Sparkles size={16} /></span>
+              <span key={i} className="flex items-center gap-10">{m}<Sparkles size={20} /></span>
             ))}
           </div>
         </div>
       </section>
 
       {/* services */}
-      <section id="services" className="mx-auto max-w-6xl scroll-mt-16 px-4 pb-20 pt-16 md:px-6 md:pt-24">
-        <div className="reveal mb-10 max-w-2xl md:mb-14">
-          <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl">Everything your day needs, under one roof.</h2>
-          <p className="mt-3 text-base text-[#1f1a14]/70">From the first idea to the last dance. Scroll through what we take care of.</p>
+      <section id="services" className="mx-auto max-w-[1600px] scroll-mt-24 px-3 pb-24 pt-24 md:px-6 md:pt-32">
+        <div className="reveal mb-12 max-w-2xl md:mb-16">
+          <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Everything your day needs, under one roof.</h2>
+          <p className="mt-4 text-lg text-[#1f1a14]/70">From the first idea to the last dance. Scroll through what we take care of.</p>
         </div>
 
         {services.map((s, i) => (
-          <article key={s.title} className="stack-card mb-6 md:sticky md:mb-[10vh]" style={{ top: `calc(5rem + ${i * 0.6}rem)` }}>
-            <div className={`grid overflow-hidden rounded-2xl border border-[#eadfc4] shadow-[0_16px_40px_-20px_rgba(31,26,20,0.3)] md:min-h-[440px] md:grid-cols-2 ${s.tone}`}>
-              <div className="flex flex-col justify-center gap-4 p-6 md:p-10">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-black/10">{s.icon}</span>
-                <h3 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{s.title}</h3>
-                <p className="text-base opacity-80">{s.short}</p>
-                <ul className="space-y-2">
+          <article key={s.title} className="stack-card mb-6 md:sticky md:mb-[14vh]" style={{ top: `calc(6.25rem + ${i * 0.7}rem)` }}>
+            <div className={`grid overflow-hidden rounded-[2rem] border border-[#eadfc4] shadow-[0_25px_60px_-20px_rgba(31,26,20,0.4)] md:min-h-[calc(100dvh-9.5rem)] md:grid-cols-2 ${s.tone}`}>
+              <div className="flex flex-col justify-center gap-5 p-7 md:p-14">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-black/10">{s.icon}</span>
+                <h3 className="font-display text-3xl font-bold tracking-tight md:text-6xl">{s.title}</h3>
+                <p className="text-base opacity-80 md:text-xl">{s.short}</p>
+                <ul className="mt-1 space-y-2.5">
                   {s.details.map((d) => (
-                    <li key={d} className="flex items-start gap-2.5 text-sm leading-snug md:text-[15px]">
-                      <CheckCircle2 size={16} className="mt-0.5 shrink-0" /> <span>{d}</span>
+                    <li key={d} className="flex items-start gap-2.5 text-[15px] leading-snug md:text-[17px]">
+                      <CheckCircle2 size={18} className="mt-0.5 shrink-0" /> <span>{d}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="relative min-h-[240px] md:min-h-full">
+              <div className="relative min-h-[260px] md:min-h-full">
                 <img src={s.image} alt={s.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
               </div>
             </div>
@@ -370,18 +370,18 @@ export default function App() {
       </section>
 
       {/* how it works */}
-      <section id="how" className="scroll-mt-16 bg-[#faf6ec] px-4 py-16 md:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal mb-8 flex flex-col justify-between gap-3 md:mb-12 md:flex-row md:items-end">
-            <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+      <section id="how" className="mx-auto max-w-[1600px] scroll-mt-24 px-4 pb-28 pt-8 md:px-6 md:pb-36">
+        <div>
+          <div className="reveal mb-10 flex flex-col justify-between gap-4 md:mb-14 md:flex-row md:items-end">
+            <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
               From “hello” to the last dance.
             </h2>
-            <p className="max-w-md text-base text-[#1f1a14]/70">
+            <p className="max-w-md text-base text-[#1f1a14]/70 md:text-lg">
               Tap or hover through how we bring your celebration together.
             </p>
           </div>
 
-          <div className="reveal flex h-[460px] flex-col gap-3 md:h-[340px] md:flex-row">
+          <div className="reveal flex h-[540px] flex-col gap-3 md:h-[430px] md:flex-row md:gap-4">
             {steps.map(([title, desc, tags, tone, pillTone], i) => {
               const open = step === i;
               return (
@@ -392,7 +392,7 @@ export default function App() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setStep(i))}
-                  className={`relative cursor-pointer overflow-hidden rounded-2xl shadow-[0_14px_36px_-20px_rgba(31,26,20,0.35)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${tone} ${
+                  className={`relative cursor-pointer overflow-hidden rounded-[2rem] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${tone} ${
                     open ? 'flex-[3.4] md:flex-[3.6]' : 'flex-[0.6] md:flex-[0.7]'
                   }`}
                 >
@@ -401,24 +401,24 @@ export default function App() {
                       open ? 'pointer-events-none opacity-0' : 'opacity-100 delay-100'
                     }`}
                   >
-                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
+                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-2xl md:[writing-mode:vertical-rl]">
                       {title}
                     </span>
                     <span className="text-xs font-semibold opacity-50 md:hidden">Open</span>
                   </div>
 
                   <div
-                    className={`absolute inset-0 flex flex-col justify-between p-5 transition-opacity duration-300 sm:p-6 md:p-8 ${
+                    className={`absolute inset-0 flex flex-col justify-between p-6 transition-opacity duration-300 sm:p-8 md:p-12 ${
                       open ? 'opacity-100 delay-150' : 'pointer-events-none opacity-0'
                     }`}
                   >
                     <div className="max-w-lg">
-                      <h3 className="font-display text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
+                      <h3 className="font-display text-2xl font-bold tracking-tight sm:text-3xl md:text-5xl">{title}</h3>
+                      <p className="mt-3 text-sm leading-relaxed opacity-85 sm:text-base md:mt-5 md:text-lg">{desc}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {tags.map((t) => (
-                        <span key={t} className={`rounded-full px-3 py-1 text-xs font-semibold sm:text-[13px] ${pillTone}`}>{t}</span>
+                        <span key={t} className={`rounded-full px-3.5 py-1.5 text-xs font-semibold sm:text-sm ${pillTone}`}>{t}</span>
                       ))}
                     </div>
                   </div>
@@ -430,14 +430,14 @@ export default function App() {
       </section>
 
       {/* gallery */}
-      <section id="gallery" className="scroll-mt-16 bg-white px-4 py-16 md:px-6 md:py-24">
-        <div className="mx-auto max-w-5xl">
-          <div className="reveal mb-8 flex flex-col justify-between gap-4 md:mb-10 md:flex-row md:items-end">
+      <section id="gallery" className="scroll-mt-24 px-4 py-24 md:px-8 md:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="reveal mb-10 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
             <div>
-              <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+              <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
                 Events we’ve brought to life.
               </h2>
-              <p className="mt-3 text-base text-[#1f1a14]/70">
+              <p className="mt-3 text-[#1f1a14]/70 md:text-lg">
                 Pick any photo below or tap the stage to view it full screen.
               </p>
             </div>
@@ -446,7 +446,7 @@ export default function App() {
                 type="button"
                 onClick={() => setSlide((s) => (s - 1 + galleryImages.length) % galleryImages.length)}
                 aria-label="Previous photo"
-                className="grid h-10 w-10 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
+                className="grid h-11 w-11 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -454,7 +454,7 @@ export default function App() {
                 type="button"
                 onClick={() => setSlide((s) => (s + 1) % galleryImages.length)}
                 aria-label="Next photo"
-                className="grid h-10 w-10 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
+                className="grid h-11 w-11 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
               >
                 <ChevronRight size={18} />
               </button>
@@ -466,7 +466,7 @@ export default function App() {
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setLight(slide)}
-            className="reveal group relative mb-4 h-[260px] w-full cursor-pointer overflow-hidden rounded-2xl border border-[#eadfc4] bg-[#faf6ec] shadow-lg sm:h-[340px] md:h-[420px]"
+            className="reveal group relative mb-5 h-[300px] w-full cursor-pointer overflow-hidden rounded-[2rem] border border-[#eadfc4] bg-[#faf6ec] shadow-2xl sm:h-[400px] md:h-[480px]"
           >
             {galleryImages.map((src, i) => (
               <img
@@ -479,7 +479,7 @@ export default function App() {
                 }`}
               />
             ))}
-            <span className="absolute bottom-3 right-3 grid h-10 w-10 place-items-center rounded-full bg-white/85 text-[#1f1a14] backdrop-blur-md transition group-hover:bg-[#c8992b]">
+            <span className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-white/85 text-[#1f1a14] backdrop-blur-md transition group-hover:bg-[#c8992b]">
               <Maximize2 size={16} />
             </span>
           </div>
@@ -506,85 +506,85 @@ export default function App() {
       </section>
 
       {/* plan your event */}
-      <section id="plan" className="scroll-mt-16 bg-[#f6e7bd] px-4 py-16 md:px-6 md:py-24">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-14">
+      <section id="plan" className="scroll-mt-24 px-5 py-24 md:py-32">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
           <div className="reveal">
-            <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl">Tell us the date. We’ll take it from there.</h2>
-            <p className="mt-4 max-w-md text-base text-[#1f1a14]/75">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
+            <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Tell us the date. We’ll take it from there.</h2>
+            <p className="mt-5 max-w-md text-lg text-[#1f1a14]/80">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
           </div>
-          <form onSubmit={submit} className="reveal space-y-4 rounded-2xl border border-[#eadfc4] bg-white p-5 shadow-xl md:p-7">
+          <form onSubmit={submit} className="reveal space-y-5 rounded-[2rem] border border-[#eadfc4] bg-white p-6 shadow-2xl md:p-8">
             <div>
               <p className="mb-2 text-sm font-semibold">What are you planning?</p>
               <div className="flex flex-wrap gap-2">
                 {eventTypes.map((t) => (
-                  <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${form.type === t ? 'border-[#c8992b] bg-[#c8992b] text-[#1f1a14]' : 'border-[#1f1a14]/15 bg-white hover:border-[#c8992b]'}`}>{t}</button>
+                  <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-4 py-2 text-sm font-medium transition ${form.type === t ? 'border-[#c8992b] bg-[#c8992b] text-[#1f1a14]' : 'border-[#1f1a14]/15 bg-white hover:border-[#c8992b]'}`}>{t}</button>
                 ))}
               </div>
             </div>
             <label className="block text-sm font-semibold">Your name
-              <input className={`${field} mt-1.5 font-normal`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" autoComplete="name" />
+              <input className={`${field} mt-2 font-normal`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" autoComplete="name" />
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm font-semibold">Event date
-                <input type="date" className={`${field} mt-1.5 font-normal`} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+                <input type="date" className={`${field} mt-2 font-normal`} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
               </label>
               <label className="block text-sm font-semibold">Guests
-                <input type="number" min="1" inputMode="numeric" className={`${field} mt-1.5 font-normal`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
+                <input type="number" min="1" inputMode="numeric" className={`${field} mt-2 font-normal`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
               </label>
             </div>
-            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-3 text-sm font-semibold text-white transition hover:bg-[#9a6f10]">
-              <Send size={16} /> Send on WhatsApp
+            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-4 text-base font-semibold text-white transition hover:bg-[#9a6f10]">
+              <Send size={18} /> Send on WhatsApp
             </button>
           </form>
         </div>
       </section>
 
       {/* footer */}
-      <footer className="border-t border-[#eadfc4] bg-[#faf6ec] px-4 pb-8 pt-14 text-[#1f1a14] md:px-6 md:pt-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col justify-between gap-10 md:flex-row md:items-start">
+      <footer className="bg-[#2b1d0a] px-6 pb-14 pt-20 text-white sm:px-10 md:px-16 md:pb-16 md:pt-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 flex flex-col justify-between gap-12 md:mb-24 md:flex-row md:items-start">
             <div className="max-w-md">
-              <img src="/logo.png" alt="Zelaris Events" className="mb-5 w-40 md:w-48" />
-              <p className="mb-6 text-sm leading-relaxed text-[#1f1a14]/70 md:text-base">
+              <img src="/logo.png" alt="Zelaris Events" className="mb-7 w-48 md:w-56" />
+              <p className="mb-8 text-base leading-relaxed text-white/70 md:text-lg">
                 Events for a brighter tomorrow. Providing budget-friendly and luxury services anywhere in India.
               </p>
-              <div className="flex items-center gap-4 text-[#1f1a14]/80">
-                <a href="https://www.instagram.com/zelarisevents/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition hover:text-[#9a6f10]">
-                  <InstagramIcon size={22} />
+              <div className="flex items-center gap-5 text-white/85">
+                <a href="https://www.instagram.com/zelarisevents/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition hover:text-[#ffe08a]">
+                  <InstagramIcon size={26} />
                 </a>
-                <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="transition hover:text-[#9a6f10]">
-                  <WhatsAppIcon size={22} />
+                <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="transition hover:text-[#ffe08a]">
+                  <WhatsAppIcon size={26} />
                 </a>
               </div>
             </div>
 
             <div className="md:text-right">
-              <h4 className="mb-4 text-base font-bold">Contact Info</h4>
-              <ul className="space-y-3 text-sm text-[#1f1a14]/70 md:text-base">
+              <h4 className="mb-5 text-lg font-bold md:text-xl">Contact Info</h4>
+              <ul className="space-y-3.5 text-base text-white/70 md:text-lg">
                 <li className="flex items-center gap-2 md:justify-end">
                   <span>Services Anywhere in India</span>
-                  <MapPin size={18} className="shrink-0 text-[#9a6f10]" />
+                  <MapPin size={20} className="shrink-0 text-[#ffe08a]" />
                 </li>
-                <li><a href="tel:+919037090810" className="transition hover:text-[#9a6f10]">Riswan: +91 90370 90810</a></li>
-                <li><a href="tel:+919037159997" className="transition hover:text-[#9a6f10]">Ansif: +91 90371 59997</a></li>
+                <li><a href="tel:+919037090810" className="transition hover:text-[#ffe08a]">Riswan: +91 90370 90810</a></li>
+                <li><a href="tel:+919037159997" className="transition hover:text-[#ffe08a]">Ansif: +91 90371 59997</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 items-center gap-4 border-t border-[#1f1a14]/10 pt-6 text-sm text-[#1f1a14]/55 md:grid-cols-3">
+          <div className="grid grid-cols-1 items-center gap-6 border-t border-white/15 pt-8 text-sm md:pt-10 text-white/55 md:grid-cols-3">
             <p className="order-2 text-center md:order-1 md:text-left">
               &copy; {new Date().getFullYear()} Zelaris Events. All rights reserved.
             </p>
 
             <p
-              className="font-display order-1 text-center text-xs font-bold uppercase text-[#9a6f10] md:order-2 md:text-sm"
+              className="font-display order-1 text-center text-xs font-bold uppercase text-[#ffe08a] md:order-2 md:text-sm"
               style={{ letterSpacing: '0.3em', paddingLeft: '0.3em' }}
             >
               A ZAC VENTURE
             </p>
 
             <div className="order-3 flex justify-center md:justify-end">
-              <a href="https://wa.me/917558957246" target="_blank" rel="noopener noreferrer" title="Contact Developer" className="font-display text-base italic text-[#1f1a14]/60 transition hover:text-[#9a6f10]">
+              <a href="https://wa.me/917558957246" target="_blank" rel="noopener noreferrer" title="Contact Developer" className="font-display text-base italic text-white/65 transition hover:text-[#ffe08a]">
                 R.
               </a>
             </div>
