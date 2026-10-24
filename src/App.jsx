@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const WA = '919037159997';
 const wa = (text) => `https://wa.me/${WA}?text=${encodeURIComponent(text)}`;
@@ -257,6 +258,7 @@ export default function App() {
         .drift { animation: drift 14s ease-in-out infinite }
         .marquee { animation: marquee 45s linear infinite }
         .ping2 { animation: ping2 2.2s cubic-bezier(0,0,.2,1) infinite }
+        html, body { overflow-anchor: none; }
         a:focus-visible, button:focus-visible, [role="button"]:focus-visible { outline: 2px solid #9a6f10; outline-offset: 2px }
         @media (prefers-reduced-motion: reduce) { .drift,.marquee,.ping2,.col-up,.col-down { animation: none } }
       `}</style>
@@ -292,33 +294,33 @@ export default function App() {
       </a>
 
       {/* hero */}
-      <section id="top" className="relative flex flex-col min-h-[100dvh] overflow-hidden pt-24 text-[#1f1a14] md:pt-28">
+      <section id="top" className="relative flex min-h-[100svh] flex-col overflow-hidden pt-[5.25rem] text-[#1f1a14] md:pt-28">
         <div className="drift absolute -left-24 top-20 h-80 w-80 rounded-full bg-[#f3d57e]/50 blur-[100px]" />
         <div className="drift absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-[#e8c25a]/30 blur-[110px]" style={{ animationDelay: '-6s' }} />
 
-        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-8 px-5 py-8 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8">
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-4 px-5 py-4 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8 md:py-8">
           <div className="hero-copy text-center md:text-left">
-            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-[3.5rem]">
+            <h1 className="font-display text-[1.9rem] font-bold leading-[1.12] tracking-tight sm:text-5xl xl:text-[3.5rem]">
               {'Your celebration, planned down to the last detail.'.split(' ').map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden pb-1 align-bottom">
                   <span className="hero-word inline-block">{w}&nbsp;</span>
                 </span>
               ))}
             </h1>
-            <p className="hero-fade mx-auto mt-5 max-w-lg text-base leading-relaxed md:text-[17px] text-[#1f1a14]/70 md:mx-0">
+            <p className="hero-fade mx-auto mt-3 max-w-lg text-sm leading-relaxed md:mt-5 md:text-[17px] text-[#1f1a14]/70 md:mx-0">
               Weddings, receptions and corporate events anywhere in India. Décor, catering, grand entries and cinematic coverage, all handled by one friendly team.
             </p>
-            <div className="hero-fade mt-7 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
-              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-6 py-3 text-base font-semibold text-[#1f1a14] shadow-md transition hover:bg-[#b8891f]">
+            <div className="hero-fade mt-4 flex flex-row items-center justify-center gap-2.5 md:mt-7 md:justify-start md:gap-3">
+              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-5 py-2.5 text-[15px] font-semibold text-[#1f1a14] shadow-md md:px-6 md:py-3 md:text-base transition hover:bg-[#b8891f]">
                 Book your event <ArrowUpRight size={18} />
               </a>
-              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-6 py-3 text-base font-medium text-[#1f1a14] transition hover:bg-[#faf6ec]">
+              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-5 py-2.5 text-[15px] font-medium md:px-6 md:py-3 md:text-base text-[#1f1a14] transition hover:bg-[#faf6ec]">
                 See what we do
               </button>
             </div>
           </div>
 
-          <div className="hero-cols grid h-[300px] grid-cols-2 gap-3 md:h-[58vh]" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
+          <div className="hero-cols grid h-[26svh] grid-cols-2 gap-3 md:h-[58vh]" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
             {[0, 1].map((col) => {
               const order = col ? [3, 4, 5, 0, 1, 2] : [0, 1, 2, 3, 4, 5];
               return (
@@ -335,7 +337,7 @@ export default function App() {
         </div>
 
         {/* gold ticker */}
-        <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-3 text-[#1f1a14]">
+        <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-2.5 text-[#1f1a14] md:py-3">
           <div className="marquee flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold md:text-xl">
             {[...marquee, ...marquee, ...marquee, ...marquee].map((m, i) => (
               <span key={i} className="flex items-center gap-8">{m}<Sparkles size={18} /></span>
@@ -353,7 +355,7 @@ export default function App() {
 
         {services.map((s, i) => (
           <article key={s.title} className="stack-card sticky mb-[8vh] md:mb-[12vh]" style={{ top: `calc(5.5rem + ${i * 0.4}rem)` }}>
-            <div className={`flex h-[clamp(540px,calc(100dvh-8.5rem),700px)] flex-col overflow-hidden rounded-3xl border border-[#eadfc4] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] md:grid md:h-[clamp(560px,calc(100dvh-8rem),680px)] md:grid-cols-2 ${s.tone}`}>
+            <div className={`flex h-[clamp(540px,calc(100svh-8.5rem),700px)] flex-col overflow-hidden rounded-3xl border border-[#eadfc4] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] md:grid md:h-[clamp(560px,calc(100svh-8rem),680px)] md:grid-cols-2 ${s.tone}`}>
               <div className="flex shrink-0 flex-col justify-center gap-2 p-4 md:shrink md:gap-4 md:p-10">
                 <span className="hidden h-11 w-11 place-items-center rounded-xl bg-black/10 md:grid">{s.icon}</span>
                 <h3 className="font-display text-2xl font-bold tracking-tight md:text-4xl">{s.title}</h3>
@@ -375,18 +377,18 @@ export default function App() {
       </section>
 
       {/* how it works */}
-      <section id="how" className="mx-auto max-w-7xl scroll-mt-24 px-4 pb-20 pt-8 md:px-8 md:pb-28">
+      <section id="how" className="mx-auto flex min-h-[100svh] max-w-7xl scroll-mt-24 flex-col justify-center px-4 pb-6 pt-[5.5rem] md:block md:min-h-0 md:px-8 md:pb-28 md:pt-8">
         <div>
-          <div className="reveal mb-8 flex flex-col justify-between gap-3 md:mb-12 md:flex-row md:items-end">
+          <div className="reveal mb-4 flex flex-col justify-between gap-1.5 md:mb-12 md:flex-row md:items-end">
             <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl lg:text-4xl">
               From “hello” to the last dance.
             </h2>
-            <p className="max-w-md text-base text-[#1f1a14]/70 md:text-lg">
+            <p className="max-w-md text-sm text-[#1f1a14]/70 md:text-lg">
               Tap or hover through how we bring your celebration together.
             </p>
           </div>
 
-          <div className="reveal flex h-[640px] flex-col gap-3 md:h-[330px] md:flex-row">
+          <div className="reveal flex h-[clamp(380px,calc(100svh-13.5rem),620px)] flex-col gap-2.5 md:h-[330px] md:flex-row">
             {steps.map(([title, desc, tags, tone, pillTone], i) => {
               const open = step === i;
               return (
@@ -398,7 +400,7 @@ export default function App() {
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setStep(i))}
                   className={`relative cursor-pointer overflow-hidden rounded-3xl shadow-[0_14px_36px_-20px_rgba(31,26,20,0.35)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${tone} ${
-                    open ? 'flex-[3.4] md:flex-[3.6]' : 'flex-[0.6] md:flex-[0.7]'
+                    open ? 'flex-[3.4] md:flex-[3.6]' : 'flex-[0.5] md:flex-[0.7]'
                   }`}
                 >
                   <div
@@ -406,24 +408,24 @@ export default function App() {
                       open ? 'pointer-events-none opacity-0' : 'opacity-100 delay-100'
                     }`}
                   >
-                    <span className="font-display whitespace-nowrap text-xl font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
+                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
                       {title}
                     </span>
                     <span className="text-xs font-semibold opacity-50 md:hidden">Open</span>
                   </div>
 
                   <div
-                    className={`absolute inset-0 flex flex-col justify-between p-6 transition-opacity duration-300 md:right-auto md:w-[34rem] md:p-8 ${
+                    className={`absolute inset-0 flex flex-col justify-between gap-3 p-4 transition-opacity duration-300 md:right-auto md:w-[34rem] md:p-8 ${
                       open ? 'opacity-100 delay-150' : 'pointer-events-none opacity-0'
                     }`}
                   >
                     <div className="max-w-lg">
-                      <h3 className="font-display text-3xl font-bold tracking-tight md:text-4xl">{title}</h3>
-                      <p className="mt-3 text-base leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
+                      <h3 className="font-display text-2xl font-bold tracking-tight md:text-4xl">{title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {tags.map((t) => (
-                        <span key={t} className={`rounded-full px-4 py-2 text-sm font-semibold md:px-3.5 md:py-1.5 md:text-[0.8rem] ${pillTone}`}>{t}</span>
+                        <span key={t} className={`rounded-full px-3 py-1.5 text-xs font-semibold md:px-3.5 md:py-1.5 md:text-[0.8rem] ${pillTone}`}>{t}</span>
                       ))}
                     </div>
                   </div>
@@ -435,14 +437,14 @@ export default function App() {
       </section>
 
       {/* gallery */}
-      <section id="gallery" className="scroll-mt-24 px-4 py-12 md:px-8 md:py-14">
+      <section id="gallery" className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center px-4 pb-6 pt-[5.5rem] md:block md:min-h-0 md:px-8 md:py-14">
         <div className="mx-auto max-w-5xl">
-          <div className="reveal mb-6 flex flex-col justify-between gap-3 md:mb-6 md:flex-row md:items-end">
+          <div className="reveal mb-3 flex items-end justify-between gap-3 md:mb-6">
             <div>
               <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl lg:text-4xl">
                 Events we’ve brought to life.
               </h2>
-              <p className="mt-2 text-sm text-[#1f1a14]/70 md:text-base">
+              <p className="mt-2 hidden text-sm text-[#1f1a14]/70 md:block md:text-base">
                 Pick any photo below or tap the stage to view it full screen.
               </p>
             </div>
@@ -471,7 +473,7 @@ export default function App() {
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setLight(slide)}
-            className="reveal group relative mb-3 h-[240px] w-full cursor-pointer overflow-hidden rounded-3xl border border-[#eadfc4] bg-[#faf6ec] shadow-xl sm:h-[320px] md:h-[44vh] md:min-h-[300px]"
+            className="reveal group relative mb-3 h-[36svh] w-full cursor-pointer overflow-hidden rounded-3xl border border-[#eadfc4] bg-[#faf6ec] shadow-xl md:h-[44vh] md:min-h-[300px]"
           >
             {galleryImages.map((src, i) => (
               <img
@@ -511,13 +513,13 @@ export default function App() {
       </section>
 
       {/* plan your event */}
-      <section id="plan" className="scroll-mt-24 px-5 py-20 md:py-28">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
+      <section id="plan" className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center px-4 pb-6 pt-[5.5rem] md:block md:min-h-0 md:px-5 md:py-28">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-5 md:grid-cols-2 md:gap-12">
           <div className="reveal">
-            <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Tell us the date. We’ll take it from there.</h2>
-            <p className="mt-4 max-w-md text-base text-[#1f1a14]/80 md:text-lg">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
+            <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Tell us the date. We’ll take it from there.</h2>
+            <p className="mt-4 hidden max-w-md text-base text-[#1f1a14]/80 md:block md:text-lg">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
           </div>
-          <form onSubmit={submit} className="reveal space-y-4 rounded-3xl border border-[#eadfc4] bg-white p-6 shadow-xl md:p-7">
+          <form onSubmit={submit} className="reveal space-y-3 rounded-3xl border border-[#eadfc4] bg-white p-4 shadow-xl md:space-y-4 md:p-7">
             <div>
               <p className="mb-2 text-sm font-semibold">What are you planning?</p>
               <div className="flex flex-wrap gap-2">
@@ -527,14 +529,14 @@ export default function App() {
               </div>
             </div>
             <label className="block text-sm font-semibold">Your name
-              <input className={`${field} mt-2 font-normal`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" autoComplete="name" />
+              <input className={`${field} mt-1.5 font-normal`} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" autoComplete="name" />
             </label>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               <label className="block text-sm font-semibold">Event date
-                <input type="date" className={`${field} mt-2 font-normal`} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+                <input type="date" className={`${field} mt-1.5 font-normal`} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
               </label>
               <label className="block text-sm font-semibold">Guests
-                <input type="number" min="1" inputMode="numeric" className={`${field} mt-2 font-normal`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
+                <input type="number" min="1" inputMode="numeric" className={`${field} mt-1.5 font-normal`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
               </label>
             </div>
             <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-3 text-sm font-semibold text-white transition hover:bg-[#9a6f10]">
