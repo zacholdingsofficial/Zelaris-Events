@@ -39,7 +39,7 @@ const InstagramIcon = ({ size = 24, className = '' }) => (
 
 const services = [
   {
-    image: '/first.png', icon: <Crown size={26} />, title: 'Planning & Hospitality',
+    image: '/first.png', icon: <Crown size={22} />, title: 'Planning & Hospitality',
     short: 'A–Z event planning, VIP hospitality and flawless coordination.',
     tone: 'bg-gradient-to-br from-[#fff2cc] to-[#f6d98a] text-[#1f1a14]',
     details: [
@@ -54,7 +54,7 @@ const services = [
     ],
   },
   {
-    image: '/second.png', icon: <Sparkles size={26} />, title: 'Theme & Décor',
+    image: '/second.png', icon: <Sparkles size={22} />, title: 'Theme & Décor',
     short: 'Custom stages, floral designs and premium venue transformations.',
     tone: 'bg-gradient-to-br from-[#ffffff] to-[#efebe0] text-[#1f1a14]',
     details: [
@@ -65,7 +65,7 @@ const services = [
     ],
   },
   {
-    image: '/third.png', icon: <Utensils size={26} />, title: 'Premium Catering',
+    image: '/third.png', icon: <Utensils size={22} />, title: 'Premium Catering',
     short: 'Customized menus, diverse counters and efficient catering staff.',
     tone: 'bg-gradient-to-br from-[#f3d57e] to-[#d9a93a] text-[#1f1a14]',
     details: [
@@ -76,7 +76,7 @@ const services = [
     ],
   },
   {
-    image: '/fourth.png', icon: <Wand2 size={26} />, title: 'Grand Entries & VFX',
+    image: '/fourth.png', icon: <Wand2 size={22} />, title: 'Grand Entries & VFX',
     short: 'Pyrotechnics, LED walls and spectacular bride & groom entries.',
     tone: 'bg-gradient-to-br from-[#fbf7ee] to-[#e2dac6] text-[#1f1a14]',
     details: [
@@ -87,7 +87,7 @@ const services = [
     ],
   },
   {
-    image: '/fifth.png', icon: <Camera size={26} />, title: 'Cinematic Media',
+    image: '/fifth.png', icon: <Camera size={22} />, title: 'Cinematic Media',
     short: 'Professional photography, drone coverage and highlight reels.',
     tone: 'bg-gradient-to-br from-[#ffe9b0] to-[#e8b84f] text-[#1f1a14]',
     details: [
@@ -98,7 +98,7 @@ const services = [
     ],
   },
   {
-    image: '/sixth.png', icon: <CalendarCheck size={26} />, title: 'Scope & Future',
+    image: '/sixth.png', icon: <CalendarCheck size={22} />, title: 'Scope & Future',
     short: 'Meeting the growing demand for professional event organizers.',
     tone: 'bg-gradient-to-br from-[#ffffff] to-[#f9e8bd] text-[#1f1a14]',
     details: [
@@ -115,29 +115,29 @@ const steps = [
     'Share the idea',
     'Tell us the occasion, the guest count and the mood you have in mind. We study the venue layout and build a clear plan that fits your budget.',
     ['Venue layout', 'Guest flow', 'Mood & theme', 'Budget plan'],
-    'bg-gradient-to-br from-[#fbf7ee] to-[#e2dac6] text-[#1f1a14]',
-    'bg-white/65 text-[#1f1a14]',
+    'bg-gradient-to-br from-[#fff9e8] to-[#f4e8c8] text-[#1f1a14]',
+    'bg-white/70 text-[#1f1a14]',
   ],
   [
     'Shape the plan',
     'Before anything is built on site, you see a 3D preview of the stage and decor alongside a tailored menu and live counter selection.',
     ['Custom concepts', '3D venue preview', 'Stage & florals', 'Menu selection'],
-    'bg-gradient-to-br from-[#fff2cc] to-[#f6d98a] text-[#1f1a14]',
-    'bg-white/65 text-[#1f1a14]',
+    'bg-gradient-to-br from-[#fdeaa9] to-[#f1cd70] text-[#1f1a14]',
+    'bg-white/60 text-[#1f1a14]',
   ],
   [
     'Run the day',
     'One team looks after the entire floor. Stage setup, catering counters, guest parking, VIP hospitality and grand entries run together smoothly.',
     ['Stage & decor', 'Full catering', 'Grand entries', 'Guest care'],
-    'bg-gradient-to-br from-[#f3d57e] to-[#d9a93a] text-[#1f1a14]',
-    'bg-white/65 text-[#1f1a14]',
+    'bg-gradient-to-br from-[#e9bd55] to-[#bf8c22] text-[#1f1a14]',
+    'bg-white/50 text-[#1f1a14]',
   ],
   [
     'Relive it all',
     'While you spend time with family and guests, our photo and drone crew capture the celebration and put together your highlight film.',
     ['Photography', 'Cinema film', 'Drone coverage', 'Highlight edit'],
-    'bg-gradient-to-br from-[#ffffff] to-[#efebe0] text-[#1f1a14]',
-    'bg-white/65 text-[#1f1a14]',
+    'bg-gradient-to-br from-[#9a6f10] to-[#4a300a] text-white',
+    'bg-white/15 text-[#ffe08a]',
   ],
 ];
 
@@ -196,6 +196,7 @@ export default function App() {
 
   // page animations
   useEffect(() => {
+    let onRefresh;
     const ctx = gsap.context(() => {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const desktop = window.matchMedia('(min-width: 768px)').matches;
@@ -205,10 +206,24 @@ export default function App() {
         .from('.hero-fade', { y: 20, opacity: 0, duration: 0.7, stagger: 0.1 }, '-=0.5')
         .from('.hero-cols', { y: 50, opacity: 0, duration: 1 }, 0.1);
 
+      // stacking cards (desktop + mobile): each card sticks, the next one slides over it
       const cards = gsap.utils.toArray('.stack-card');
-      if (desktop && !reduce) {
+      const setTops = () => {
+        const vh = window.innerHeight;
+        const wide = window.innerWidth >= 768;
+        cards.forEach((c, i) => {
+          if (wide) { c.style.top = c.dataset.top; return; }
+          // phones: a card taller than the screen sticks by its bottom edge instead
+          const fit = vh - c.offsetHeight - 16;
+          c.style.top = `${Math.min(84 + i * 8, fit)}px`;
+        });
+      };
+      setTops();
+      onRefresh = setTops;
+      ScrollTrigger.addEventListener('refreshInit', onRefresh);
+      if (!reduce) {
         cards.slice(0, -1).forEach((c, i) => {
-          gsap.to(c, { scale: 0.96, ease: 'none', scrollTrigger: { trigger: cards[i + 1], start: 'top 85%', end: 'top 15%', scrub: true } });
+          gsap.to(c, { scale: desktop ? 0.96 : 0.94, ease: 'none', scrollTrigger: { trigger: cards[i + 1], start: 'top 85%', end: 'top 15%', scrub: true } });
         });
       }
 
@@ -223,7 +238,10 @@ export default function App() {
       });
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      if (onRefresh) ScrollTrigger.removeEventListener('refreshInit', onRefresh);
+      ctx.revert();
+    };
   }, []);
 
   const submit = (e) => {
@@ -234,7 +252,7 @@ export default function App() {
     window.open(wa(`${parts.join(' ')}. Can we talk?`), '_blank', 'noopener');
   };
 
-  const field = 'w-full rounded-xl border border-[#1f1a14]/15 bg-white px-4 py-3 text-[15px] text-[#1f1a14] outline-none transition focus:border-[#c8992b] focus:ring-4 focus:ring-[#c8992b]/20';
+  const field = 'w-full rounded-lg border border-[#1f1a14]/15 bg-white px-3.5 py-2.5 text-sm text-[#1f1a14] outline-none transition focus:border-[#c8992b] focus:ring-4 focus:ring-[#c8992b]/20';
 
   return (
     <div ref={root} className="relative text-[#1f1a14] selection:bg-[#f6e7bd] selection:text-[#1f1a14]" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", overflowX: 'clip', background: 'linear-gradient(180deg,#fdebb8 0%,#fff6dc 12%,#ffffff 25%,#f6f3ec 37%,#fbecc4 50%,#fffaf0 63%,#f4f1ea 75%,#f8e2a6 90%,#f3dc9a 100%)' }}>
@@ -263,9 +281,9 @@ export default function App() {
       <header className="fixed left-0 top-3 z-[80] flex w-full justify-center px-3 md:top-4">
         <nav className="flex w-full max-w-5xl items-center justify-between gap-3 rounded-full border border-white/30 bg-gradient-to-r from-[#2b1d0a] via-[#6b4a10] to-[#b88a22] py-2.5 pl-5 pr-2.5 text-white shadow-[0_12px_40px_-12px_rgba(60,35,5,0.55)] md:pl-7">
           <button onClick={() => go('#top')} aria-label="Back to top" className="shrink-0">
-            <img src="/logo.png" alt="Zelaris Events" className="h-10 w-auto md:h-12" />
+            <img src="/logo.png" alt="Zelaris Events" className="h-10 w-auto md:h-11" />
           </button>
-          <div className="hidden items-center gap-8 text-[17px] font-semibold lg:flex">
+          <div className="hidden items-center gap-7 text-[15px] font-semibold lg:flex">
             {navItems.map(([id, label]) => (
               <button key={id} onClick={() => go(`#${id}`)} className={`relative py-1 transition ${active === id ? 'text-[#ffe08a]' : 'text-white/80 hover:text-white'}`}>
                 {label}
@@ -273,54 +291,54 @@ export default function App() {
               </button>
             ))}
           </div>
-          <span className="truncate text-base font-semibold text-[#ffe08a] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
-          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#fff1c9] to-[#ffd9b0] px-5 py-3 text-base font-semibold text-[#2b1d0a] transition hover:scale-105">
-            <WhatsAppIcon size={18} /> <span className="hidden sm:inline">Chat with us</span><span className="sm:hidden">Chat</span>
+          <span className="truncate text-sm font-semibold text-[#ffe08a] lg:hidden">{navItems.find(([id]) => id === active)?.[1]}</span>
+          <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#fff1c9] to-[#ffd9b0] px-4 py-2.5 text-sm font-semibold text-[#2b1d0a] transition hover:scale-105">
+            <WhatsAppIcon size={16} /> <span className="hidden sm:inline">Chat with us</span><span className="sm:hidden">Chat</span>
           </a>
         </nav>
       </header>
 
       {/* floating whatsapp */}
-      <a href={wa('Hi Zelaris Events!')} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-[80] grid h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-lg transition hover:scale-105">
+      <a href={wa('Hi Zelaris Events!')} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-[80] grid h-12 w-12 place-items-center rounded-full bg-[#25d366] text-white shadow-lg transition hover:scale-105">
         <span className="ping2 absolute inset-0 rounded-full bg-[#25d366]/50" />
-        <WhatsAppIcon size={28} className="relative" />
+        <WhatsAppIcon size={24} className="relative" />
       </a>
 
       {/* hero */}
-      <section id="top" className="relative flex flex-col min-h-[100dvh] overflow-hidden pt-28 text-[#1f1a14] md:pt-32">
+      <section id="top" className="relative flex flex-col min-h-[100dvh] overflow-hidden pt-24 text-[#1f1a14] md:pt-28">
         <div className="drift absolute -left-24 top-20 h-80 w-80 rounded-full bg-[#f3d57e]/50 blur-[100px]" />
         <div className="drift absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-[#e8c25a]/30 blur-[110px]" style={{ animationDelay: '-6s' }} />
 
-        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-8 px-5 pb-4 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8">
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-8 px-5 py-8 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-8">
           <div className="hero-copy text-center md:text-left">
-            <h1 className="font-display text-[2.5rem] font-bold leading-[1.04] tracking-tight sm:text-6xl xl:text-[4.8rem]">
+            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-[3.5rem]">
               {'Your celebration, planned down to the last detail.'.split(' ').map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden pb-1 align-bottom">
                   <span className="hero-word inline-block">{w}&nbsp;</span>
                 </span>
               ))}
             </h1>
-            <p className="hero-fade mx-auto mt-6 max-w-xl text-base leading-relaxed md:text-lg text-[#1f1a14]/70 md:mx-0">
+            <p className="hero-fade mx-auto mt-5 max-w-lg text-base leading-relaxed md:text-[17px] text-[#1f1a14]/70 md:mx-0">
               Weddings, receptions and corporate events anywhere in India. Décor, catering, grand entries and cinematic coverage, all handled by one friendly team.
             </p>
-            <div className="hero-fade mt-8 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
-              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-8 py-4 text-lg font-semibold text-[#1f1a14] shadow-md transition hover:bg-[#b8891f]">
-                Book your event <ArrowUpRight size={20} />
+            <div className="hero-fade mt-7 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
+              <a href={wa("Hi Zelaris Events! I'd like to inquire about booking an event.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c8992b] px-6 py-3 text-base font-semibold text-[#1f1a14] shadow-md transition hover:bg-[#b8891f]">
+                Book your event <ArrowUpRight size={18} />
               </a>
-              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-8 py-4 text-lg font-medium text-[#1f1a14] transition hover:bg-[#faf6ec]">
+              <button onClick={() => go('#services')} className="rounded-full border border-[#1f1a14]/25 px-6 py-3 text-base font-medium text-[#1f1a14] transition hover:bg-[#faf6ec]">
                 See what we do
               </button>
             </div>
           </div>
 
-          <div className="hero-cols grid h-[34vh] grid-cols-2 gap-3 md:h-[66vh] md:gap-4" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
+          <div className="hero-cols grid h-[300px] grid-cols-2 gap-3 md:h-[58vh]" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)' }}>
             {[0, 1].map((col) => {
               const order = col ? [3, 4, 5, 0, 1, 2] : [0, 1, 2, 3, 4, 5];
               return (
                 <div key={col} className="overflow-hidden">
                   <div className={col ? 'col-down' : 'col-up'}>
                     {[...order, ...order].map((n, i) => (
-                      <img key={i} src={services[n].image} alt={i < 6 ? services[n].title : ''} aria-hidden={i >= 6} className="mb-3 aspect-[3/4] w-full rounded-3xl object-cover shadow-md md:mb-4" />
+                      <img key={i} src={services[n].image} alt={i < 6 ? services[n].title : ''} aria-hidden={i >= 6} className="mb-3 aspect-[3/4] w-full rounded-2xl object-cover shadow-md" />
                     ))}
                   </div>
                 </div>
@@ -330,38 +348,38 @@ export default function App() {
         </div>
 
         {/* gold ticker */}
-        <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-4 text-[#1f1a14]">
-          <div className="marquee flex w-max gap-10 whitespace-nowrap font-display text-xl font-bold md:text-2xl">
+        <div className="hero-fade relative z-10 overflow-hidden bg-gradient-to-r from-[#e6c36a] via-[#c8992b] to-[#e6c36a] py-3 text-[#1f1a14]">
+          <div className="marquee flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold md:text-xl">
             {[...marquee, ...marquee, ...marquee, ...marquee].map((m, i) => (
-              <span key={i} className="flex items-center gap-10">{m}<Sparkles size={20} /></span>
+              <span key={i} className="flex items-center gap-8">{m}<Sparkles size={18} /></span>
             ))}
           </div>
         </div>
       </section>
 
       {/* services */}
-      <section id="services" className="mx-auto max-w-[1600px] scroll-mt-24 px-3 pb-24 pt-24 md:px-6 md:pt-32">
-        <div className="reveal mb-12 max-w-2xl md:mb-16">
-          <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Everything your day needs, under one roof.</h2>
-          <p className="mt-4 text-lg text-[#1f1a14]/70">From the first idea to the last dance. Scroll through what we take care of.</p>
+      <section id="services" className="mx-auto max-w-7xl scroll-mt-24 px-4 pb-20 pt-20 md:px-8 md:pt-28">
+        <div className="reveal mb-10 max-w-2xl md:mb-14">
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Everything your day needs, under one roof.</h2>
+          <p className="mt-3 text-base text-[#1f1a14]/70 md:text-lg">From the first idea to the last dance. Scroll through what we take care of.</p>
         </div>
 
         {services.map((s, i) => (
-          <article key={s.title} className="stack-card mb-6 md:sticky md:mb-[14vh]" style={{ top: `calc(6.25rem + ${i * 0.7}rem)` }}>
-            <div className={`grid overflow-hidden rounded-[2rem] border border-[#eadfc4] shadow-[0_25px_60px_-20px_rgba(31,26,20,0.4)] md:min-h-[calc(100dvh-9.5rem)] md:grid-cols-2 ${s.tone}`}>
-              <div className="flex flex-col justify-center gap-5 p-7 md:p-14">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-black/10">{s.icon}</span>
-                <h3 className="font-display text-3xl font-bold tracking-tight md:text-6xl">{s.title}</h3>
-                <p className="text-base opacity-80 md:text-xl">{s.short}</p>
-                <ul className="mt-1 space-y-2.5">
+          <article key={s.title} className="stack-card sticky mb-[8vh] md:mb-[12vh]" data-top={`calc(5.5rem + ${i * 0.5}rem)`} style={{ top: `calc(5.5rem + ${i * 0.5}rem)` }}>
+            <div className={`grid overflow-hidden rounded-3xl border border-[#eadfc4] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] md:h-[clamp(560px,calc(100dvh-8rem),680px)] md:grid-cols-2 ${s.tone}`}>
+              <div className="flex flex-col justify-center gap-3 p-5 md:gap-4 md:p-10">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-black/10">{s.icon}</span>
+                <h3 className="font-display text-2xl font-bold tracking-tight md:text-4xl">{s.title}</h3>
+                <p className="text-base opacity-80 md:text-lg">{s.short}</p>
+                <ul className="space-y-1.5 md:space-y-2">
                   {s.details.map((d) => (
-                    <li key={d} className="flex items-start gap-2.5 text-[15px] leading-snug md:text-[17px]">
-                      <CheckCircle2 size={18} className="mt-0.5 shrink-0" /> <span>{d}</span>
+                    <li key={d} className="flex items-start gap-2.5 text-sm leading-snug md:text-base">
+                      <CheckCircle2 size={16} className="mt-0.5 shrink-0" /> <span>{d}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="relative min-h-[260px] md:min-h-full">
+              <div className="relative order-first min-h-[200px] md:order-last md:min-h-full">
                 <img src={s.image} alt={s.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
               </div>
             </div>
@@ -370,10 +388,10 @@ export default function App() {
       </section>
 
       {/* how it works */}
-      <section id="how" className="mx-auto max-w-[1600px] scroll-mt-24 px-4 pb-28 pt-8 md:px-6 md:pb-36">
+      <section id="how" className="mx-auto max-w-7xl scroll-mt-24 px-4 pb-20 pt-8 md:px-8 md:pb-28">
         <div>
-          <div className="reveal mb-10 flex flex-col justify-between gap-4 md:mb-14 md:flex-row md:items-end">
-            <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+          <div className="reveal mb-8 flex flex-col justify-between gap-3 md:mb-12 md:flex-row md:items-end">
+            <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl lg:text-4xl">
               From “hello” to the last dance.
             </h2>
             <p className="max-w-md text-base text-[#1f1a14]/70 md:text-lg">
@@ -381,7 +399,7 @@ export default function App() {
             </p>
           </div>
 
-          <div className="reveal flex h-[540px] flex-col gap-3 md:h-[430px] md:flex-row md:gap-4">
+          <div className="reveal flex h-[440px] flex-col gap-3 md:h-[330px] md:flex-row">
             {steps.map(([title, desc, tags, tone, pillTone], i) => {
               const open = step === i;
               return (
@@ -392,7 +410,7 @@ export default function App() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setStep(i))}
-                  className={`relative cursor-pointer overflow-hidden rounded-[2rem] shadow-[0_20px_50px_-20px_rgba(31,26,20,0.35)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${tone} ${
+                  className={`relative cursor-pointer overflow-hidden rounded-3xl shadow-[0_14px_36px_-20px_rgba(31,26,20,0.35)] transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${tone} ${
                     open ? 'flex-[3.4] md:flex-[3.6]' : 'flex-[0.6] md:flex-[0.7]'
                   }`}
                 >
@@ -401,20 +419,20 @@ export default function App() {
                       open ? 'pointer-events-none opacity-0' : 'opacity-100 delay-100'
                     }`}
                   >
-                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-2xl md:[writing-mode:vertical-rl]">
+                    <span className="font-display whitespace-nowrap text-lg font-bold tracking-tight md:rotate-180 md:text-xl md:[writing-mode:vertical-rl]">
                       {title}
                     </span>
                     <span className="text-xs font-semibold opacity-50 md:hidden">Open</span>
                   </div>
 
                   <div
-                    className={`absolute inset-0 flex flex-col justify-between p-6 transition-opacity duration-300 sm:p-8 md:p-12 ${
+                    className={`absolute inset-0 flex flex-col justify-between p-5 transition-opacity duration-300 sm:p-6 md:right-auto md:w-[34rem] md:p-8 ${
                       open ? 'opacity-100 delay-150' : 'pointer-events-none opacity-0'
                     }`}
                   >
                     <div className="max-w-lg">
-                      <h3 className="font-display text-2xl font-bold tracking-tight sm:text-3xl md:text-5xl">{title}</h3>
-                      <p className="mt-3 text-sm leading-relaxed opacity-85 sm:text-base md:mt-5 md:text-lg">{desc}</p>
+                      <h3 className="font-display text-2xl font-bold tracking-tight sm:text-2xl md:text-4xl">{title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed opacity-85 md:mt-3 md:text-base">{desc}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {tags.map((t) => (
@@ -430,14 +448,14 @@ export default function App() {
       </section>
 
       {/* gallery */}
-      <section id="gallery" className="scroll-mt-24 px-4 py-24 md:px-8 md:py-32">
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal mb-10 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
+      <section id="gallery" className="scroll-mt-24 px-4 py-12 md:px-8 md:py-14">
+        <div className="mx-auto max-w-5xl">
+          <div className="reveal mb-6 flex flex-col justify-between gap-3 md:mb-6 md:flex-row md:items-end">
             <div>
-              <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+              <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl lg:text-4xl">
                 Events we’ve brought to life.
               </h2>
-              <p className="mt-3 text-[#1f1a14]/70 md:text-lg">
+              <p className="mt-2 text-sm text-[#1f1a14]/70 md:text-base">
                 Pick any photo below or tap the stage to view it full screen.
               </p>
             </div>
@@ -446,7 +464,7 @@ export default function App() {
                 type="button"
                 onClick={() => setSlide((s) => (s - 1 + galleryImages.length) % galleryImages.length)}
                 aria-label="Previous photo"
-                className="grid h-11 w-11 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
+                className="grid h-10 w-10 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -454,7 +472,7 @@ export default function App() {
                 type="button"
                 onClick={() => setSlide((s) => (s + 1) % galleryImages.length)}
                 aria-label="Next photo"
-                className="grid h-11 w-11 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
+                className="grid h-10 w-10 place-items-center rounded-full border border-[#1f1a14]/20 bg-white text-[#1f1a14] transition hover:bg-[#c8992b]"
               >
                 <ChevronRight size={18} />
               </button>
@@ -466,7 +484,7 @@ export default function App() {
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setLight(slide)}
-            className="reveal group relative mb-5 h-[300px] w-full cursor-pointer overflow-hidden rounded-[2rem] border border-[#eadfc4] bg-[#faf6ec] shadow-2xl sm:h-[400px] md:h-[480px]"
+            className="reveal group relative mb-3 h-[240px] w-full cursor-pointer overflow-hidden rounded-3xl border border-[#eadfc4] bg-[#faf6ec] shadow-xl sm:h-[320px] md:h-[44vh] md:min-h-[300px]"
           >
             {galleryImages.map((src, i) => (
               <img
@@ -479,7 +497,7 @@ export default function App() {
                 }`}
               />
             ))}
-            <span className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-white/85 text-[#1f1a14] backdrop-blur-md transition group-hover:bg-[#c8992b]">
+            <span className="absolute bottom-3 right-3 grid h-10 w-10 place-items-center rounded-full bg-white/85 text-[#1f1a14] backdrop-blur-md transition group-hover:bg-[#c8992b]">
               <Maximize2 size={16} />
             </span>
           </div>
@@ -492,7 +510,7 @@ export default function App() {
                 onClick={() => setSlide(i)}
                 onDoubleClick={() => setLight(i)}
                 aria-label={`Select photo ${i + 1}`}
-                className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all duration-300 ${
+                className={`relative aspect-[3/2] overflow-hidden rounded-lg border-2 transition-all duration-300 ${
                   slide === i
                     ? 'border-[#c8992b] opacity-100 shadow-md'
                     : 'border-transparent opacity-50 hover:opacity-90'
@@ -506,18 +524,18 @@ export default function App() {
       </section>
 
       {/* plan your event */}
-      <section id="plan" className="scroll-mt-24 px-5 py-24 md:py-32">
+      <section id="plan" className="scroll-mt-24 px-5 py-20 md:py-28">
         <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
           <div className="reveal">
-            <h2 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Tell us the date. We’ll take it from there.</h2>
-            <p className="mt-5 max-w-md text-lg text-[#1f1a14]/80">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.75rem]">Tell us the date. We’ll take it from there.</h2>
+            <p className="mt-4 max-w-md text-base text-[#1f1a14]/80 md:text-lg">Fill in a few details and we’ll open WhatsApp with your message ready to send. A real person replies, usually the same day.</p>
           </div>
-          <form onSubmit={submit} className="reveal space-y-5 rounded-[2rem] border border-[#eadfc4] bg-white p-6 shadow-2xl md:p-8">
+          <form onSubmit={submit} className="reveal space-y-4 rounded-3xl border border-[#eadfc4] bg-white p-6 shadow-xl md:p-7">
             <div>
               <p className="mb-2 text-sm font-semibold">What are you planning?</p>
               <div className="flex flex-wrap gap-2">
                 {eventTypes.map((t) => (
-                  <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-4 py-2 text-sm font-medium transition ${form.type === t ? 'border-[#c8992b] bg-[#c8992b] text-[#1f1a14]' : 'border-[#1f1a14]/15 bg-white hover:border-[#c8992b]'}`}>{t}</button>
+                  <button type="button" key={t} onClick={() => setForm({ ...form, type: t })} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${form.type === t ? 'border-[#c8992b] bg-[#c8992b] text-[#1f1a14]' : 'border-[#1f1a14]/15 bg-white hover:border-[#c8992b]'}`}>{t}</button>
                 ))}
               </div>
             </div>
@@ -532,38 +550,38 @@ export default function App() {
                 <input type="number" min="1" inputMode="numeric" className={`${field} mt-2 font-normal`} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} placeholder="About how many?" />
               </label>
             </div>
-            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-4 text-base font-semibold text-white transition hover:bg-[#9a6f10]">
-              <Send size={18} /> Send on WhatsApp
+            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1a14] py-3 text-sm font-semibold text-white transition hover:bg-[#9a6f10]">
+              <Send size={16} /> Send on WhatsApp
             </button>
           </form>
         </div>
       </section>
 
       {/* footer */}
-      <footer className="bg-[#2b1d0a] px-6 pb-14 pt-20 text-white sm:px-10 md:px-16 md:pb-16 md:pt-28">
+      <footer className="bg-[#2b1d0a] px-6 pb-8 pt-16 text-white md:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-16 flex flex-col justify-between gap-12 md:mb-24 md:flex-row md:items-start">
+          <div className="mb-12 flex flex-col justify-between gap-10 md:flex-row md:items-start">
             <div className="max-w-md">
-              <img src="/logo.png" alt="Zelaris Events" className="mb-7 w-48 md:w-56" />
-              <p className="mb-8 text-base leading-relaxed text-white/70 md:text-lg">
+              <img src="/logo.png" alt="Zelaris Events" className="mb-5 w-40 md:w-48" />
+              <p className="mb-6 text-sm leading-relaxed text-white/70 md:text-base">
                 Events for a brighter tomorrow. Providing budget-friendly and luxury services anywhere in India.
               </p>
-              <div className="flex items-center gap-5 text-white/85">
+              <div className="flex items-center gap-4 text-white/85">
                 <a href="https://www.instagram.com/zelarisevents/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition hover:text-[#ffe08a]">
-                  <InstagramIcon size={26} />
+                  <InstagramIcon size={22} />
                 </a>
                 <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="transition hover:text-[#ffe08a]">
-                  <WhatsAppIcon size={26} />
+                  <WhatsAppIcon size={22} />
                 </a>
               </div>
             </div>
 
             <div className="md:text-right">
-              <h4 className="mb-5 text-lg font-bold md:text-xl">Contact Info</h4>
-              <ul className="space-y-3.5 text-base text-white/70 md:text-lg">
+              <h4 className="mb-4 text-base font-bold">Contact Info</h4>
+              <ul className="space-y-3 text-sm text-white/70 md:text-base">
                 <li className="flex items-center gap-2 md:justify-end">
                   <span>Services Anywhere in India</span>
-                  <MapPin size={20} className="shrink-0 text-[#ffe08a]" />
+                  <MapPin size={18} className="shrink-0 text-[#ffe08a]" />
                 </li>
                 <li><a href="tel:+919037090810" className="transition hover:text-[#ffe08a]">Riswan: +91 90370 90810</a></li>
                 <li><a href="tel:+919037159997" className="transition hover:text-[#ffe08a]">Ansif: +91 90371 59997</a></li>
@@ -571,7 +589,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 items-center gap-6 border-t border-white/15 pt-8 text-sm md:pt-10 text-white/55 md:grid-cols-3">
+          <div className="grid grid-cols-1 items-center gap-4 border-t border-white/15 pt-6 text-sm text-white/55 md:grid-cols-3">
             <p className="order-2 text-center md:order-1 md:text-left">
               &copy; {new Date().getFullYear()} Zelaris Events. All rights reserved.
             </p>
